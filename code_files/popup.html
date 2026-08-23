@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MaskAgent AI</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+          </svg>
+        </div>
+        <div class="brand-title">
+          <h1>MaskAgent</h1>
+          <span>SIH26171 • On-Device AI</span>
+        </div>
+      </div>
+      <div class="status-badge" id="statusBadge">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusText">Checking...</span>
+      </div>
+    </header>
+
+    <!-- State 1: Ollama Missing / Offline Alert -->
+    <div id="ollamaOfflineView" class="panel panel-alert hidden">
+      <div class="panel-alert-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+        </svg>
+        <span>Ollama Required</span>
+      </div>
+      <p>Ollama is not running at <code>http://localhost:11434</code>. MaskAgent processes all web vision tasks 100% locally on your machine for complete privacy.</p>
+      <div style="display: flex; gap: 8px; margin-top: 4px;">
+        <button id="btnRetryOllama" class="btn btn-primary" style="flex: 1;">Retry Connection</button>
+        <a href="https://ollama.com" target="_blank" class="btn btn-secondary" style="text-decoration: none; text-align: center;">Get Ollama</a>
+      </div>
+    </div>
+
+    <!-- State 2: Model Pulling View -->
+    <div id="modelPullView" class="panel hidden">
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <strong style="font-size: 13px; color: var(--accent-secondary);" id="pullModelName">Downloading Vision Model...</strong>
+          <span style="font-size: 11px; color: var(--text-muted);" id="pullPercent">0%</span>
+        </div>
+        <p style="font-size: 11.5px; color: var(--text-muted);" id="pullStatusText">Initializing download via Ollama API. Please wait a few minutes...</p>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="pullProgressFill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- State 3: Ready / Active Main Interface -->
+    <div id="mainAgentView" class="task-section hidden">
+      <!-- Settings Panel -->
+      <div class="panel">
+        <div class="settings-grid">
+          <div class="setting-item">
+            <label for="modelSelect">Ollama Model</label>
+            <select id="modelSelect" class="input-select">
+              <option value="deepseek-coder" selected>deepseek-coder (Default)</option>
+              <option value="deepseek-coder:6.7b">deepseek-coder:6.7b</option>
+              <option value="llava">llava</option>
+              <option value="qwen2.5-vl">qwen2.5-vl</option>
+            </select>
+          </div>
+          <div class="setting-item">
+            <label for="maxStepsSelect">Max Steps</label>
+            <select id="maxStepsSelect" class="input-select">
+              <option value="1">1 Step</option>
+              <option value="5">5 Steps</option>
+              <option value="10" selected>10 Steps</option>
+              <option value="15">15 Steps</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="toggle-item">
+          <div style="display: flex; flex-direction: column;">
+            <label>Visual & DOM Redaction</label>
+            <span style="font-size: 10px; color: var(--text-muted);">Mask PII/Passwords before AI</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="toggleRedaction" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Privacy Shield Indicator -->
+      <div class="privacy-badge">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+        </svg>
+        <span>Zero Data Leaves Your Device • On-Canvas Redaction Active</span>
+      </div>
+
+      <!-- Task Prompt Box -->
+      <div class="task-input-wrapper">
+        <textarea id="taskInput" class="task-textarea" placeholder="e.g. Search for laptop reviews on this page and click the main search button..."></textarea>
+        <button id="btnStartAgent" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          <span>Run Vision Agent</span>
+        </button>
+        <button id="btnStopAgent" class="btn btn-danger hidden">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M6 6h12v12H6z"/>
+          </svg>
+          <span>Stop Execution</span>
+        </button>
+      </div>
+
+      <!-- Real-Time Activity Log -->
+      <div class="log-card">
+        <div class="log-title">
+          <span>Agent Activity Stream</span>
+          <span id="stepCounter" style="color: var(--accent-secondary);">Idle</span>
+        </div>
+        <div class="log-content" id="logContent">
+          <div class="log-item info">Ready to process visual tasks on this page.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
