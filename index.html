@@ -3,982 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MaskAgent | On-Device AI Browser Agent</title>
+    <meta name="description" content="MaskAgent - On-device visual perception for lightweight browser agents. Smart India Hackathon 2026, Problem ID SIH26171.">
+    <title>MaskAgent | Private browser intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg: #000000;
-            --fg: #ffffff;
-            --accent: #00ff9d;
-            --accent-dim: rgba(0, 255, 157, 0.08);
-            --border: #333333;
-            --font-mono: 'SF Mono', 'Fira Code', 'Consolas', 'Courier New', monospace;
+        :root { --ink:#10212b; --muted:#5b6c73; --paper:#f5f7f3; --white:#fff; --mint:#a8edcb; --mint-deep:#23765d; --coral:#ff765f; --line:#d5dfd9; --mono:'DM Mono',monospace; --sans:'Space Grotesk',sans-serif; }
+        * { box-sizing:border-box; }
+        html { scroll-behavior:smooth; }
+        body { margin:0; color:var(--ink); background:var(--paper); font-family:var(--sans); line-height:1.55; }
+        body::before { content:''; position:fixed; inset:0; z-index:-1; opacity:.42; pointer-events:none; background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px); background-size:44px 44px; mask-image:linear-gradient(to bottom,black,transparent 78%); }
+        a { color:inherit; text-decoration:none; }
+        .wrap { width:min(1180px,calc(100% - 48px)); margin:auto; }
+        .mono { font-family:var(--mono); text-transform:uppercase; letter-spacing:.08em; font-size:.72rem; }
+        .eyebrow { display:flex; align-items:center; gap:10px; color:var(--mint-deep); font: .72rem var(--mono); letter-spacing:.13em; text-transform:uppercase; }
+        .eyebrow::before { content:''; width:26px; height:2px; background:var(--coral); }
+        .topbar { display:flex; align-items:center; justify-content:space-between; padding:22px 0; border-bottom:1px solid var(--line); }
+        .brand { display:flex; align-items:center; gap:12px; font-weight:700; font-size:1.1rem; }
+        .brand img { width:42px; height:42px; object-fit:contain; }
+        nav { display:flex; gap:25px; color:var(--muted); font-size:.88rem; }
+        nav a:hover { color:var(--coral); }
+        nav .nav-button { padding:7px 11px; border:1px solid var(--ink); color:var(--ink); background:var(--white); }
+        nav .nav-button:hover { color:var(--white); background:var(--ink); }
+        .partners { display:flex; align-items:center; gap:20px; }
+        .partners img { max-width:92px; max-height:52px; object-fit:contain; }
+        .hero { display:grid; grid-template-columns:1.04fr .96fr; gap:56px; min-height:650px; align-items:center; padding:72px 0 86px; }
+        h1,h2,h3,p { margin-top:0; }
+        h1 { max-width:690px; margin:18px 0 24px; font-size:clamp(3.4rem,8vw,7.6rem); line-height:.91; letter-spacing:-.075em; font-weight:700; }
+        h1 span { color:var(--coral); }
+        .hero-copy>p:not(.eyebrow) { max-width:570px; color:var(--muted); font-size:1.12rem; }
+        .actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:32px; }
+        .button { display:inline-flex; align-items:center; gap:9px; padding:13px 17px; border:1px solid var(--ink); border-radius:3px; font-weight:600; transition:transform .2s,box-shadow .2s; }
+        .button:hover { transform:translateY(-3px); box-shadow:4px 4px 0 var(--ink); }
+        .button.primary { background:var(--ink); color:var(--white); }
+        .button.secondary { background:var(--white); }
+        .hero-visual { position:relative; min-height:470px; display:grid; place-items:center; }
+        .hero-visual::before { content:''; position:absolute; width:370px; height:370px; border-radius:50%; background:var(--mint); opacity:.72; animation:breathe 5s ease-in-out infinite; }
+        .hero-visual::after { content:'LOCAL BY DESIGN'; position:absolute; top:22px; right:0; color:var(--mint-deep); font:.7rem var(--mono); letter-spacing:.12em; transform:rotate(90deg) translateX(40px); }
+        .hero-visual img { position:relative; width:min(100%,430px); filter:drop-shadow(18px 20px 0 rgba(16,33,43,.13)); animation:float 6s ease-in-out infinite; }
+        .orbit { position:absolute; width:470px; height:470px; border:1px solid rgba(35,118,93,.35); border-radius:50%; }
+        .orbit::after { content:''; position:absolute; width:12px; height:12px; background:var(--coral); border-radius:50%; top:25px; left:105px; }
+        @keyframes breathe { 50% { transform:scale(1.08); opacity:.52; } }
+        @keyframes float { 50% { transform:translateY(-13px) rotate(1deg); } }
+        .statbar { display:grid; grid-template-columns:repeat(3,1fr); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+        .stat { padding:22px 20px; border-right:1px solid var(--line); }
+        .stat:last-child { border-right:0; }
+        .stat strong { display:block; font-size:1.5rem; margin-bottom:3px; }
+        .stat span { color:var(--muted); font-size:.84rem; }
+        section { padding:110px 0; }
+        .section-head { display:grid; grid-template-columns:.7fr 1fr; gap:40px; align-items:end; margin-bottom:46px; }
+        h2 { font-size:clamp(2.4rem,5vw,4.8rem); line-height:.98; letter-spacing:-.06em; margin-bottom:0; }
+        .section-head p { max-width:490px; color:var(--muted); margin-bottom:0; }
+        .pipeline { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; }
+        .step { min-height:205px; padding:20px; border:1px solid var(--line); background:var(--white); position:relative; transition:transform .25s,border-color .25s; }
+        .step:hover { transform:translateY(-8px); border-color:var(--coral); }
+        .step:not(:last-child)::after { content:'→'; position:absolute; right:-17px; top:50%; z-index:2; color:var(--coral); background:var(--paper); padding:3px; font-size:1.2rem; }
+        .step-num { display:grid; place-items:center; width:34px; height:34px; border-radius:50%; background:var(--mint); color:var(--mint-deep); font:.8rem var(--mono); margin-bottom:50px; }
+        .step h3 { font-size:1rem; margin-bottom:8px; }
+        .step p { color:var(--muted); font-size:.86rem; margin-bottom:0; }
+        .dark-band { background:var(--ink); color:var(--white); position:relative; overflow:hidden; }
+        .dark-band::before { content:'MASK'; position:absolute; right:-20px; bottom:-100px; color:rgba(168,237,203,.06); font-size:19rem; font-weight:700; letter-spacing:-.12em; line-height:1; }
+        .dark-band .section-head p { color:#aebdc0; }
+        .feature-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:#3a4b50; }
+        .feature { min-height:235px; padding:28px; background:var(--ink); border:1px solid transparent; transition:background .25s,border-color .25s; }
+        .feature:hover { background:#17333a; border-color:var(--mint); }
+        .feature-icon { color:var(--mint); font:1.4rem var(--mono); margin-bottom:48px; }
+        .feature h3 { font-size:1.1rem; margin-bottom:8px; }
+        .feature p { color:#aebdc0; font-size:.88rem; margin-bottom:0; }
+        .proof { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+        .proof .video-card { grid-column:1/-1; }
+        .video-card iframe { aspect-ratio:21/9; }
+        .media-card { margin:0; background:var(--white); border:1px solid var(--line); padding:12px; transition:transform .25s,box-shadow .25s; }
+        .media-card:hover { transform:translateY(-5px); box-shadow:8px 8px 0 var(--mint); }
+        .media-card img,.media-card iframe { display:block; width:100%; aspect-ratio:16/10; object-fit:cover; border:0; }
+        .media-card figcaption { display:flex; justify-content:space-between; gap:12px; padding:16px 5px 4px; font-size:.88rem; font-weight:600; }
+        .media-card figcaption span { color:var(--coral); font:.68rem var(--mono); }
+        .team { display:grid; grid-template-columns:1fr 1.2fr; gap:56px; align-items:center; }
+        .team img { width:100%; display:block; border:1px solid var(--line); padding:9px; background:var(--white); transform:rotate(-2deg); box-shadow:14px 14px 0 var(--mint); }
+        .team-copy p { color:var(--muted); max-width:500px; }
+        .callout { border-left:4px solid var(--coral); padding:18px 22px; background:#fff4dd; margin-top:26px; font-weight:600; }
+        .details { display:grid; grid-template-columns:1fr 1fr; gap:60px; border-top:1px solid var(--line); padding-top:34px; }
+        .details h3 { font-size:1.1rem; }
+        .details p,.details li { color:var(--muted); font-size:.92rem; }
+        ul { padding-left:20px; }
+        li { margin-bottom:8px; }
+        code { color:var(--mint-deep); background:#e7f4eb; padding:2px 6px; font:.83em var(--mono); }
+        footer { padding:55px 0 70px; border-top:1px solid var(--line); display:flex; justify-content:space-between; gap:20px; color:var(--muted); font-size:.85rem; }
+        footer strong { color:var(--ink); }
+        .reveal { opacity:0; transform:translateY(24px); transition:opacity .7s ease,transform .7s ease; }
+        .reveal.visible { opacity:1; transform:none; }
+        @media (max-width:800px) {
+            .wrap { width:min(100% - 32px,620px); }
+            nav { display:none; }
+            .partners img { max-width:68px; max-height:38px; }
+            .hero { grid-template-columns:1fr; gap:20px; min-height:auto; padding:64px 0; }
+            h1 { font-size:clamp(3.2rem,17vw,6rem); }
+            .hero-visual { min-height:340px; }
+            .hero-visual::before,.orbit { width:290px; height:290px; }
+            .hero-visual img { max-width:300px; }
+            .statbar { grid-template-columns:1fr; }
+            .stat { border-right:0; border-bottom:1px solid var(--line); }
+            .stat:last-child { border-bottom:0; }
+            section { padding:76px 0; }
+            .section-head,.team,.details { grid-template-columns:1fr; gap:18px; }
+            .pipeline { grid-template-columns:1fr; gap:10px; }
+            .step { min-height:auto; }
+            .step-num { margin-bottom:20px; }
+            .step:not(:last-child)::after { content:'↓'; right:50%; top:auto; bottom:-18px; }
+            .feature-grid,.proof { grid-template-columns:1fr; }
+            .proof .video-card { grid-column:auto; }
+            footer { flex-direction:column; }
         }
-        
-        * {
-            box-sizing: border-box;
-        }
-        
-        html {
-            scroll-behavior: smooth;
-        }
-        
-        body {
-            background-color: var(--bg);
-            color: var(--fg);
-            font-family: var(--font-mono);
-            line-height: 1.6;
-            max-width: 960px;
-            margin: 0 auto;
-            padding: 2rem 1.5rem;
-            font-size: 16px;
-            opacity: 0;
-            animation: pageLoad 0.8s ease-out forwards;
-        }
-
-        @keyframes pageLoad {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .reveal {
-            opacity: 0;
-            transform: translateY(24px);
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-        }
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        h1, h2, h3, h4 {
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-top: 3rem;
-            margin-bottom: 1rem;
-            transition: color 0.3s ease, text-shadow 0.3s ease;
-        }
-        
-        h1 {
-            font-size: 2.2rem;
-            border-bottom: 2px solid var(--border);
-            padding-bottom: 0.5rem;
-            margin-top: 0;
-        }
-        h1:hover {
-            color: var(--accent);
-            text-shadow: 0 0 12px var(--accent-dim);
-            border-bottom-color: var(--accent);
-        }
-
-        h2 {
-            font-size: 1.4rem;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 0.25rem;
-        }
-        h2:hover {
-            color: var(--accent);
-            border-bottom-color: var(--accent);
-        }
-
-        h3 {
-            font-size: 1.1rem;
-            margin-top: 2rem;
-            color: #cccccc;
-        }
-
-        p {
-            margin-bottom: 1rem;
-            color: #e0e0e0;
-        }
-
-        a {
-            color: var(--fg);
-            text-decoration: underline;
-            text-underline-offset: 4px;
-            transition: all 0.2s ease;
-        }
-        a:hover {
-            color: var(--accent);
-            background-color: transparent;
-            text-shadow: 0 0 8px var(--accent);
-        }
-
-        code {
-            background-color: #111;
-            color: var(--accent);
-            padding: 0.15em 0.4em;
-            font-size: 0.9em;
-            font-family: var(--font-mono);
-            border: 1px solid var(--border);
-            border-radius: 3px;
-            transition: all 0.2s ease;
-        }
-        code:hover {
-            border-color: var(--accent);
-            box-shadow: 0 0 8px var(--accent-dim);
-        }
-
-        pre {
-            background-color: #050505;
-            border: 1px solid var(--border);
-            padding: 1.2rem;
-            overflow-x: auto;
-            margin: 1.5rem 0;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        pre:hover {
-            border-color: var(--accent);
-            box-shadow: 0 0 20px var(--accent-dim);
-        }
-        pre code {
-            background-color: transparent;
-            color: var(--fg);
-            padding: 0;
-            font-size: 0.9em;
-            border: none;
-        }
-        pre code:hover {
-            box-shadow: none;
-            border: none;
-        }
-
-        blockquote {
-            border-left: 3px solid var(--accent);
-            padding-left: 1rem;
-            margin: 1.5rem 0;
-            font-style: italic;
-            color: #cccccc;
-            background: var(--accent-dim);
-            padding: 1rem;
-            border-radius: 0 4px 4px 0;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1.5rem 0;
-        }
-        th, td {
-            border: 1px solid var(--border);
-            padding: 0.75rem;
-            text-align: left;
-            transition: background-color 0.2s ease;
-        }
-        th {
-            background-color: #111;
-            color: var(--accent);
-            font-weight: bold;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 0.05em;
-        }
-        tr:hover td {
-            background-color: var(--accent-dim);
-        }
-
-        ul, ol {
-            padding-left: 1.5rem;
-            margin-bottom: 1rem;
-        }
-        li {
-            margin-bottom: 0.5rem;
-            color: #e0e0e0;
-        }
-        li::marker {
-            color: var(--accent);
-        }
-
-        hr {
-            border: 0;
-            border-top: 1px solid var(--border);
-            margin: 4rem 0;
-            position: relative;
-        }
-        hr::after {
-            content: '◆';
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            background-color: var(--bg);
-            padding: 0 1rem;
-            color: var(--accent);
-            font-size: 0.8rem;
-        }
-
-        .ascii-art {
-            white-space: pre;
-            font-size: 0.85rem;
-            line-height: 1.3;
-            overflow-x: auto;
-            color: #aaaaaa;
-        }
-        pre:hover .ascii-art {
-            color: var(--fg);
-        }
-
-        .tag {
-            display: inline-block;
-            border: 1px solid var(--border);
-            padding: 0.15em 0.5em;
-            font-size: 0.75em;
-            margin-right: 0.5em;
-            text-transform: uppercase;
-            vertical-align: middle;
-            border-radius: 3px;
-            transition: all 0.2s ease;
-        }
-        .tag-done {
-            background-color: var(--accent);
-            color: var(--bg);
-            border-color: var(--accent);
-            font-weight: bold;
-        }
-        .tag-wip {
-            background-color: transparent;
-            color: var(--accent);
-            border-color: var(--accent);
-        }
-        .tag:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px var(--accent-dim);
-        }
-
-        .warning-box {
-            border: 1px solid var(--accent);
-            background-color: var(--accent-dim);
-            color: var(--accent);
-            padding: 1rem;
-            margin: 1.5rem 0;
-            text-transform: uppercase;
-            font-weight: bold;
-            border-radius: 4px;
-            animation: pulse-border 3s infinite;
-        }
-
-        @keyframes pulse-border {
-            0%, 100% { box-shadow: 0 0 5px var(--accent-dim); }
-            50% { box-shadow: 0 0 15px var(--accent-dim); }
-        }
-
-        .cursor {
-            display: inline-block;
-            width: 10px;
-            height: 1.2em;
-            background-color: var(--accent);
-            animation: blink 1s step-end infinite;
-            vertical-align: text-bottom;
-            margin-left: 4px;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        /* Demo Section Styles */
-        .demo-container {
-            margin: 2rem 0;
-        }
-        
-        .screenshot-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin: 2rem 0;
-        }
-        
-        .screenshot-item {
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            background: #050505;
-        }
-        
-        .screenshot-item:hover {
-            border-color: var(--accent);
-            box-shadow: 0 0 30px var(--accent-dim);
-            transform: translateY(-4px);
-        }
-        
-        .screenshot-item img {
-            width: 100%;
-            height: auto;
-            display: block;
-            border-bottom: 1px solid var(--border);
-        }
-        
-        .screenshot-caption {
-            padding: 1rem;
-            text-align: center;
-            font-size: 0.9rem;
-            color: #888;
-        }
-        
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            overflow: hidden;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            margin: 2rem 0;
-            transition: all 0.3s ease;
-        }
-        
-        .video-container:hover {
-            border-color: var(--accent);
-            box-shadow: 0 0 30px var(--accent-dim);
-        }
-        
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        
-        .demo-label {
-            display: inline-block;
-            background: var(--accent);
-            color: var(--bg);
-            padding: 0.25rem 0.75rem;
-            font-size: 0.8rem;
-            font-weight: bold;
-            border-radius: 4px;
-            margin-bottom: 1rem;
-            text-transform: uppercase;
-        }
+        @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms!important; transition-duration:.01ms!important; } html { scroll-behavior:auto; } }
     </style>
 </head>
 <body>
-
-    <header class="reveal">
-        <h1>MaskAgent</h1>
-        <p style="font-size: 1.2rem; font-weight: bold; color: var(--fg);">On-Device AI Browser Agent for Privacy-Preserving Web Automation</p>
-        <blockquote>
-            See the page. Protect the data. Let AI act.<span class="cursor"></span>
-        </blockquote>
-        <p>MaskAgent is a privacy-focused browser extension that combines <strong>on-device privacy protection</strong>, <strong>DOM/UI understanding</strong>, and <strong>local AI-powered browser automation</strong>.</p>
-        <p>Instead of blindly sending a webpage containing personal information to an AI model, MaskAgent first identifies sensitive information such as names, email addresses, phone numbers, addresses, passwords, and other personally identifiable information.</p>
-        <p>The sensitive content is then <strong>masked/redacted before AI processing</strong>.</p>
-        <p>MaskAgent can then use a local AI model through <strong>Ollama</strong> to understand the sanitized webpage and determine browser actions.</p>
-    </header>
-
-    <hr>
-
-    <section id="demo" class="reveal">
-        <h2>🎬 Live Demo</h2>
-        <p>See MaskAgent in action - watch how it protects your privacy while automating browser tasks.</p>
-        
-        <div class="video-container">
-            <iframe 
-                src="https://www.youtube.com/embed/jCiSNUajwM0" 
-                title="MaskAgent Demo Video" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowfullscreen>
-            </iframe>
-        </div>
-    </section>
-
-    <section id="screenshots" class="reveal">
-        <h2>📸 Screenshots</h2>
-        <p>See how MaskAgent protects sensitive information in real-time.</p>
-        
-        <div class="screenshot-grid">
-            <div class="screenshot-item">
-                <img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/1-Screenshot%20from%202026-08-23%2017-13-22.png" alt="MaskAgent Privacy Detection Interface">
-               
-            </div>
-            
-            <div class="screenshot-item">
-                <img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/2-Screenshot%20from%202026-08-23%2017-18-08.png" alt="MaskAgent Agent Activity Stream">
-                
-            </div>
-        </div>
-    </section>
-
-    <hr>
-
-    <section id="core-idea" class="reveal">
-        <h2>Core Idea</h2>
-        <p>Traditional AI browser agents can potentially expose sensitive information because the webpage context may be sent directly to an AI service. MaskAgent follows a different approach:</p>
-<pre><code class="ascii-art">
-                    WEBPAGE
-                        |
-                        v
-              +------------------+
-              |  DOM + UI Scan   |
-              +--------+---------+
-                       |
-                       v
-              +------------------+
-              | Privacy Detection|
-              |   & Redaction    |
-              +--------+---------+
-                       |
-                       v
-              +------------------+
-              | Sanitized Context|
-              +--------+---------+
-                       |
-                       v
-              +------------------+
-              | Local AI / Ollama|
-              |  DeepSeek-Coder  |
-              +--------+---------+
-                       |
-                       v
-              +------------------+
-              | Action Decision  |
-              +--------+---------+
-                       |
-                       v
-              +------------------+
-              | Browser Action   |
-              | Click / Type /   |
-              | Scroll / Select  |
-              +------------------+
-</code></pre>
-        <p>The principle is simple: <strong style="color: var(--accent);">Private information should be protected before AI processing, not after it.</strong></p>
-    </section>
-
-    <section id="why-maskagent" class="reveal">
-        <h2>Why MaskAgent?</h2>
-        <p>Modern browser agents can perform useful tasks such as finding buttons, reading webpage structure, filling forms, clicking elements, navigating websites, and understanding webpage content. However, webpages frequently contain sensitive information.</p>
-        
-        <div style="display: flex; flex-wrap: wrap; gap: 2rem; margin: 2rem 0;">
-            <div style="flex: 1; min-width: 300px;">
-                <h3>Without MaskAgent</h3>
-<pre><code class="ascii-art">
-Webpage --> AI
-              |
-              +-- Personal data may be exposed
-</code></pre>
-            </div>
-            <div style="flex: 1; min-width: 300px;">
-                <h3>With MaskAgent</h3>
-<pre><code class="ascii-art">
-Webpage
-   |
-   v
-Privacy Detection
-   |
-   v
-Redaction
-   |
-   v
-Sanitized Context
-   |
-   v
-Local AI
-</code></pre>
-            </div>
-        </div>
-    </section>
-
-    <section id="features" class="reveal">
-        <h2>Features</h2>
-        
-        <h3>Privacy-Preserving AI Processing</h3>
-        <p>MaskAgent identifies potentially sensitive UI elements and masks them before AI processing. Examples include: Names, Email addresses, Phone numbers, Passwords, Addresses, Dates of birth, and other personally identifiable information.</p>
-
-        <h3>DOM + Visual Understanding</h3>
-        <p>MaskAgent can work with webpage structure and visual context to understand the current page. The extension can identify: Text fields, Buttons, Form elements, Labels, Links, Page structure, and Visible UI elements.</p>
-
-        <h3>Local AI</h3>
-        <p>MaskAgent can communicate with a locally running AI model through Ollama (e.g., DeepSeek-Coder). The AI runs locally instead of requiring the webpage context to be sent to a remote AI API.</p>
-
-        <h3>Browser Agent</h3>
-        <p>The agent can reason about the next browser action. Supported actions include: <code>CLICK</code>, <code>TYPE</code>, <code>SCROLL</code>, <code>SELECT</code>, <code>DONE</code>. The agent follows the user's requested objective and attempts to perform the required action on the webpage.</p>
-
-        <h3>Agent Activity Stream</h3>
-        <p>MaskAgent provides an activity stream showing what the agent is doing, making behavior easier to understand and debug.</p>
-<pre><code class="ascii-art">
-[5:31:44 PM] Starting MaskAgent task
-[5:31:44 PM] Privacy Redaction: ON
-[5:31:44 PM] Agent started
-[5:31:44 PM] Executing Step 1/5
-[5:31:45 PM] Privately masked sensitive UI elements
-[5:31:45 PM] Consulting local Ollama model
-[5:31:47 PM] Ollama response received
-[5:31:47 PM] AI Decision: CLICK
-</code></pre>
-    </section>
-
-    <section id="architecture" class="reveal">
-        <h2>Project Architecture</h2>
-<pre><code class="ascii-art">
-+------------------------------------------+
-|                Browser                   |
-|                                          |
-|  +------------------------------------+  |
-|  |           MaskAgent                |  |
-|  |                                    |  |
-|  |  +--------------+                  |  |
-|  |  | Popup UI     |                  |  |
-|  |  +------+-------+                  |  |
-|  |         |                          |  |
-|  |  +------v-------+                  |  |
-|  |  | Background   |                  |  |
-|  |  | Service      |                  |  |
-|  |  +------+-------+                  |  |
-|  |         |                          |  |
-|  |  +------v-------+                  |  |
-|  |  | Content      |                  |  |
-|  |  | Script       |                  |  |
-|  |  +------+-------+                  |  |
-|  |         |                          |  |
-|  |         v                          |  |
-|  |   DOM / UI Analysis                |  |
-|  |         |                          |  |
-|  |         v                          |  |
-|  |   Privacy Redaction                |  |
-|  +---------+--------------------------+  |
-|            |                             |
-+------------+-----------------------------+
-             |
-             | Local API
-             v
-+------------------------------------------+
-|                 Ollama                   |
-|                                          |
-|          DeepSeek-Coder                  |
-|                                          |
-|       Local AI Inference                 |
-+------------------------------------------+
-</code></pre>
-    </section>
-
-    <section id="structure" class="reveal">
-        <h2>Project Structure</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>File</th>
-                    <th>Purpose</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td><code>manifest.json</code></td><td>Chrome extension configuration</td></tr>
-                <tr><td><code>background.js</code></td><td>Background/service-worker logic and AI communication</td></tr>
-                <tr><td><code>content.js</code></td><td>Webpage interaction, DOM processing and privacy handling</td></tr>
-                <tr><td><code>popup.html</code></td><td>MaskAgent extension interface</td></tr>
-                <tr><td><code>popup.js</code></td><td>Popup controls and agent execution logic</td></tr>
-                <tr><td><code>styles.css</code></td><td>Extension UI styling</td></tr>
-                <tr><td><code>icon16.png</code></td><td>16x16 extension icon</td></tr>
-                <tr><td><code>icon48.png</code></td><td>48x48 extension icon</td></tr>
-                <tr><td><code>icon128.png</code></td><td>128x128 extension icon</td></tr>
-                <tr><td><code>README.md</code></td><td>Project documentation</td></tr>
-            </tbody>
-        </table>
-    </section>
-
-    <section id="tech-stack" class="reveal">
-        <h2>Technology Stack</h2>
-        <ul>
-            <li><strong>Frontend:</strong> HTML5, CSS3, JavaScript, Chrome Extension APIs</li>
-            <li><strong>AI:</strong> Ollama, DeepSeek-Coder, Local LLM inference</li>
-            <li><strong>Privacy:</strong> DOM-based PII detection, UI element masking/redaction, Password protection, Sanitized AI context</li>
-            <li><strong>Browser:</strong> Chromium-based browsers (Google Chrome, Brave, other Chromium-compatible browsers)</li>
-        </ul>
-    </section>
-
-    <hr>
-
-    <section id="requirements" class="reveal">
-        <h2>Requirements & Setup</h2>
-        <p>Before running MaskAgent, make sure you have: A Chromium-based browser, Linux / Windows / macOS, Ollama installed, a compatible local AI model, and the MaskAgent source code.</p>
-
-        <h3>1. Installing Ollama</h3>
-        <p>Install Ollama on your system and verify it:</p>
-<pre><code>ollama --version</code></pre>
-        <p>Check installed models:</p>
-<pre><code>ollama list</code></pre>
-        <p>If the model is not installed, pull it:</p>
-<pre><code>ollama pull deepseek-coder</code></pre>
-
-        <h3>2. Configure Ollama for Browser Extension</h3>
-        <p>Because MaskAgent is a browser extension communicating with a local Ollama server, the extension origin must be allowed. On Linux systems where Ollama runs as a systemd service:</p>
-<pre><code>sudo systemctl edit ollama.service</code></pre>
-        <p>Add the following:</p>
-<pre><code>[Service]
-Environment="OLLAMA_ORIGINS=chrome-extension://*"</code></pre>
-        <p>Save and exit, then run:</p>
-<pre><code>sudo systemctl daemon-reload
-sudo systemctl restart ollama</code></pre>
-        <p>Verify the environment:</p>
-<pre><code>systemctl show ollama --property=Environment --no-pager</code></pre>
-
-        <h3>3. Test Ollama</h3>
-        <p>First test the Ollama API:</p>
-<pre><code>curl http://localhost:11434/api/tags</code></pre>
-        <p>Then test the model:</p>
-<pre><code>curl http://localhost:11434/api/generate \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "deepseek-coder:latest",
-    "prompt": "Say hello in one sentence.",
-    "stream": false
-  }'</code></pre>
-
-        <h3>4. Install MaskAgent in Chrome</h3>
-        <ol>
-            <li>Open <code>chrome://extensions</code></li>
-            <li>Enable <strong>Developer mode</strong></li>
-            <li>Click <strong>Load unpacked</strong></li>
-            <li>Select the <code>MaskAgent/</code> project folder</li>
-            <li>MaskAgent should appear in your extension list. Enable it if necessary.</li>
-        </ol>
-
-        <h3>5. After Changing the Code</h3>
-        <p>Whenever you modify the extension source code: Open <code>chrome://extensions</code> -> Find MaskAgent -> Click Reload -> Refresh the webpage -> Open MaskAgent -> Run Agent.</p>
-    </section>
-
-    <section id="testing" class="reveal">
-        <h2>Testing MaskAgent</h2>
-        <p>You can create a local test page containing intentionally fake personal information to verify privacy detection and browser automation.</p>
-<pre><code>&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;head&gt;&lt;title&gt;MaskAgent Privacy Test&lt;/title&gt;&lt;/head&gt;
-&lt;body&gt;
-&lt;h1&gt;MaskAgent Privacy Test&lt;/h1&gt;
-&lt;label&gt;Full Name&lt;/label&gt;
-&lt;input type="text" value="John Alexander"&gt;
-&lt;br&gt;&lt;br&gt;
-&lt;label&gt;Email&lt;/label&gt;
-&lt;input type="email" value="john.alexander@example.com"&gt;
-&lt;br&gt;&lt;br&gt;
-&lt;label&gt;Phone&lt;/label&gt;
-&lt;input type="tel" value="+91 9876543210"&gt;
-&lt;br&gt;&lt;br&gt;
-&lt;label&gt;Password&lt;/label&gt;
-&lt;input type="password" value="TestPassword123"&gt;
-&lt;br&gt;&lt;br&gt;
-&lt;button&gt;Submit&lt;/button&gt;
-&lt;/body&gt;
-&lt;/html&gt;</code></pre>
-        <p><em style="color: var(--accent);">Use fake test data only.</em></p>
-
-        <h3>Privacy Test Prompt</h3>
-        <blockquote>Scan this webpage for sensitive personal information such as names, email addresses, phone numbers, dates of birth, addresses, passwords, and other personally identifiable information. Identify which UI elements contain sensitive data. Do not modify, click, submit, or enter anything. Verify that sensitive elements are masked or redacted before AI processing, while non-sensitive information remains visible. Return only the detected sensitive element types and their locations.</blockquote>
-
-        <h3>Browser Agent Test Prompts</h3>
-        <ul>
-            <li><strong>Test 1 (Page Understanding):</strong> Identify all form fields on this page. Do not change or submit anything.</li>
-            <li><strong>Test 2 (Element Detection):</strong> Find the Submit button on this page. Do not click it.</li>
-            <li><strong>Test 3 (Browser Action):</strong> Click the Submit button. Do not modify any other fields.</li>
-            <li><strong>Test 4 (Form Interaction):</strong> Enter "Test" into the First Name field and "User" into the Last Name field. Do not submit the form.</li>
-            <li><strong>Test 5 (Privacy Detection):</strong> Identify all sensitive personal information on this page. Do not modify or submit anything. Verify that sensitive information is masked before AI processing.</li>
-        </ul>
-    </section>
-
-    <section id="privacy-demo" class="reveal">
-        <h2>Privacy Demonstration</h2>
-        <p>The most important demonstration of MaskAgent is the difference between raw webpage information and AI-visible information.</p>
-        <div style="display: flex; flex-wrap: wrap; gap: 2rem; margin: 2rem 0;">
-            <div style="flex: 1; min-width: 300px;">
-                <h3>Original Webpage</h3>
-<pre><code>Name:    John Alexander
-Email:   john.alexander@gmail.com
-Phone:   +91 9876543210
-Address: 12 Example Street, Chennai
-Password: ********</code></pre>
-            </div>
-            <div style="flex: 1; min-width: 300px;">
-                <h3 style="color: var(--accent);">Sanitized AI Context</h3>
-<pre><code style="color: var(--accent);">Name:    [REDACTED]
-Email:   [REDACTED]
-Phone:   [REDACTED]
-Address: [REDACTED]
-Password: [REDACTED]</code></pre>
-            </div>
-        </div>
-        <p>The AI can still understand the structure (e.g., Email field -> sensitive, Submit button -> normal UI element) without requiring the actual personal values.</p>
-    </section>
-
-    <hr>
-
-    <section id="how-it-works" class="reveal">
-        <h2>How MaskAgent Works</h2>
-        <ol>
-            <li>User provides a task</li>
-            <li>MaskAgent scans the webpage</li>
-            <li>DOM/UI elements are identified</li>
-            <li>Sensitive information is detected</li>
-            <li>Sensitive information is masked</li>
-            <li>Sanitized context is prepared</li>
-            <li>Local Ollama model receives the context</li>
-            <li>AI determines the next action</li>
-            <li>MaskAgent validates the action</li>
-            <li>Browser performs the action</li>
-            <li>Page state is checked again</li>
-            <li>Agent completes or continues the task</li>
-        </ol>
-
-        <h3>Privacy Architecture</h3>
-<pre><code class="ascii-art">
-              RAW WEBPAGE
-                   |
-                   v
-          +-----------------+
-          | Privacy Layer   |
-          +--------+--------+
-                   |
-           Sensitive Data
-              REDACTED
-                   |
-                   v
-          +-----------------+
-          | Sanitized Data  |
-          +--------+--------+
-                   |
-                   v
-          +-----------------+
-          | Local AI Model  |
-          +-----------------+
-</code></pre>
-    </section>
-
-    <section id="security" class="reveal">
-        <h2>Security Considerations</h2>
-        <div class="warning-box">
-            ⚠ Important: Do not test the extension with real passwords, banking information, credit/debit card numbers, government identification numbers, private documents, or confidential company information. Use synthetic test data during development.
-        </div>
-        <p>MaskAgent is currently a research/development prototype. It should not be assumed that privacy detection is perfect. Potential limitations include:</p>
-        <ul>
-            <li>PII detection may produce false positives or miss unusual formats.</li>
-            <li>Websites may dynamically modify their DOM.</li>
-            <li>Visual text can be difficult to identify accurately.</li>
-            <li>AI models can produce incorrect decisions.</li>
-            <li>Browser automation can perform unintended actions if not properly validated.</li>
-            <li>Local AI models may require significant CPU/RAM resources.</li>
-            <li>Passwords and sensitive fields require additional safeguards.</li>
-        </ul>
-    </section>
-
-    <section id="status" class="reveal">
-        <h2>Current Development Status</h2>
-        
-        <h3>Completed</h3>
-        <ul>
-            <li><span class="tag tag-done">DONE</span> Browser extension structure & MaskAgent popup UI</li>
-            <li><span class="tag tag-done">DONE</span> DOM processing & Privacy masking/redaction</li>
-            <li><span class="tag tag-done">DONE</span> Local Ollama & DeepSeek-Coder integration</li>
-            <li><span class="tag tag-done">DONE</span> Chrome extension to Ollama communication & CORS config</li>
-            <li><span class="tag tag-done">DONE</span> Agent activity stream & Basic browser action execution</li>
-            <li><span class="tag tag-done">DONE</span> Local privacy testing</li>
-        </ul>
-
-        <h3>In Development</h3>
-        <ul>
-            <li><span class="tag tag-wip">WIP</span> More accurate PII detection & Better visual PII detection</li>
-            <li><span class="tag tag-wip">WIP</span> Strict structured AI responses & Action validation</li>
-            <li><span class="tag tag-wip">WIP</span> Improved task completion detection & DONE action handling</li>
-            <li><span class="tag tag-wip">WIP</span> Prompt-injection protection & Better browser action targeting</li>
-            <li><span class="tag tag-wip">WIP</span> Performance optimization, Cross-browser testing & Improved privacy dashboard</li>
-        </ul>
-    </section>
-
-    <section id="roadmap" class="reveal">
-        <h2>Future Roadmap</h2>
-        <ul>
-            <li><strong>Phase 1 — Privacy:</strong> DOM PII masking, Password masking, Email/Phone detection, Advanced PII detection, Visual OCR-based PII detection.</li>
-            <li><strong>Phase 2 — Agent Intelligence:</strong> Local LLM integration, Browser action execution, Structured JSON actions, Action validation, Task completion detection, Better planning.</li>
-            <li><strong>Phase 3 — Security:</strong> Prompt injection detection, Webpage instruction isolation, Action permission system, Sensitive-action confirmation, Privacy audit log.</li>
-            <li><strong>Phase 4 — Performance:</strong> Lightweight model support, CPU optimization, Reduced inference latency, Context compression, Efficient DOM extraction.</li>
-            <li><strong>Phase 5 — Browser Support:</strong> Chromium development (Chrome, Brave, Edge), Firefox compatibility.</li>
-        </ul>
-    </section>
-
-    <section id="use-cases" class="reveal">
-        <h2>Example Use Cases</h2>
-        <ul>
-            <li><strong>Private Form Assistance:</strong> Help users understand and interact with forms without exposing sensitive values to an external AI system.</li>
-            <li><strong>Web Automation:</strong> Users can provide tasks such as "Find the login button" or "Find all form fields."</li>
-            <li><strong>Accessibility Assistance:</strong> Help users navigate complicated web interfaces using natural-language instructions.</li>
-            <li><strong>Enterprise Privacy:</strong> Architecture can potentially be adapted for environments where webpage data should remain local.</li>
-            <li><strong>Education & Research:</strong> Demonstration of AI agents, browser automation, privacy-preserving AI, local LLM inference, PII detection, and human-AI interaction.</li>
-        </ul>
-    </section>
-
-    <section id="comparison" class="reveal">
-        <h2>Privacy-First Comparison</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Capability</th>
-                    <th>Traditional Cloud Agent</th>
-                    <th>MaskAgent</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td>Browser understanding</td><td>YES</td><td style="color: var(--accent); font-weight: bold;">YES</td></tr>
-                <tr><td>AI automation</td><td>YES</td><td style="color: var(--accent); font-weight: bold;">YES</td></tr>
-                <tr><td>Local AI inference</td><td>NO / Optional</td><td style="color: var(--accent); font-weight: bold;">YES</td></tr>
-                <tr><td>Pre-AI privacy layer</td><td>Usually NO</td><td style="color: var(--accent); font-weight: bold;">YES</td></tr>
-                <tr><td>DOM redaction</td><td>Usually NO</td><td style="color: var(--accent); font-weight: bold;">YES</td></tr>
-                <tr><td>Password masking</td><td>VARIES</td><td style="color: var(--accent); font-weight: bold;">YES</td></tr>
-                <tr><td>Local Ollama support</td><td>NO</td><td style="color: var(--accent); font-weight: bold;">YES</td></tr>
-                <tr><td>Activity monitoring</td><td>VARIES</td><td style="color: var(--accent); font-weight: bold;">YES</td></tr>
-                <tr><td>Privacy-focused architecture</td><td>LIMITED</td><td style="color: var(--accent); font-weight: bold;">CORE OBJECTIVE</td></tr>
-            </tbody>
-        </table>
-    </section>
-
-    <hr>
-
-    <section id="philosophy" class="reveal">
-        <h2>Design Philosophy</h2>
-        <ol>
-            <li><strong>Privacy First:</strong> Sensitive information should be protected before AI processing.</li>
-            <li><strong>Local Intelligence:</strong> When possible, AI inference should happen locally.</li>
-            <li><strong>Human Control:</strong> AI should assist the user rather than silently performing uncontrolled actions.</li>
-        </ol>
-
-        <h3>Example Agent Flow</h3>
-<pre><code class="ascii-art">
-USER
- |
- | "Find the Submit button"
- v
-MASKAGENT
- |
- +-- Scan webpage
- |
- +-- Detect sensitive information
- |
- +-- Mask sensitive elements
- |
- +-- Create sanitized context
- |
- v
-LOCAL OLLAMA
- |
- +-- DeepSeek-Coder
- |
- v
-AI DECISION
- |
- +-- CLICK --> submit_button
- |
- v
-ACTION VALIDATOR
- |
- +-- Is action allowed?
- +-- Does target exist?
- +-- Is target relevant?
- |
- v
-BROWSER
- |
- +-- Click Submit
-</code></pre>
-    </section>
-
-    <section id="development-notes" class="reveal">
-        <h2>Development Notes</h2>
-        <p>MaskAgent is currently being developed and tested using:</p>
-        <ul>
-            <li><strong>Browser:</strong> Chromium-based browser</li>
-            <li><strong>Operating System:</strong> Linux</li>
-            <li><strong>Local AI:</strong> Ollama (Model: DeepSeek-Coder)</li>
-            <li><strong>Extension:</strong> Chrome Manifest-based extension</li>
-        </ul>
-        <p><em style="color: #888;">Note: Local inference can produce significant CPU usage depending on the model and system hardware.</em></p>
-    </section>
-
-    <section id="contributing" class="reveal">
-        <h2>Contributing</h2>
-        <p>Contributions and ideas are welcome. Possible areas for contribution: PII detection, OCR, Browser compatibility, Prompt-injection protection, Agent planning, Action validation, UI/UX, Performance optimization, Security testing.</p>
-        <h3>Basic Workflow</h3>
-<pre><code>git clone &lt;repository-url&gt;
-cd MaskAgent</code></pre>
-        <p>Load the folder as an unpacked browser extension via <code>chrome://extensions</code> -> Developer Mode -> Load Unpacked -> Select <code>MaskAgent/</code>.</p>
-    </section>
-
-    <section id="license" class="reveal">
-        <h2>License</h2>
-        <p>This project is intended for educational, research, and experimental purposes.</p>
-        <p><em style="color: #888;">Note: Add an appropriate open-source license to this repository before distributing the project publicly.</em></p>
-    </section>
-
-    <hr>
-
-    <footer class="reveal">
-        <h2>Author</h2>
-        <p><strong style="color: var(--accent);">BHUVANESH M</strong><br>
-        Computer Science & Engineering<br>
-        AI • Machine Learning • GenAI • Software Development</p>
-
-        <h2>Project Vision</h2>
-        <p>MaskAgent explores a simple but important question:</p>
-        <blockquote>Can AI agents interact with the web without needing unrestricted access to our private information?</blockquote>
-        <p>The goal is to build browser automation where:</p>
-<pre><code class="ascii-art">
-             AI AGENT
-                |
-                |
-        +-------v--------+
-        | Privacy Layer  |
-        +-------+--------+
-                |
-        +-------v--------+
-        | Local Context  |
-        +-------+--------+
-                |
-        +-------v--------+
-        | Local AI Model |
-        +-------+--------+
-                |
-                v
-          BROWSER ACTION
-</code></pre>
-        <blockquote style="text-align: center; border: none; font-weight: bold; font-size: 1.2rem; margin-top: 2rem; color: var(--accent); text-shadow: 0 0 10px var(--accent-dim);">
-            See the web. Protect the user. Act locally.
-        </blockquote>
-    </footer>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const observerOptions = {
-                root: null,
-                rootMargin: '0px',
-                threshold: 0.1
-            };
-
-            const observer = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('active');
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, observerOptions);
-
-            const revealElements = document.querySelectorAll('.reveal');
-            revealElements.forEach(el => observer.observe(el));
-        });
-    </script>
+    <div class="wrap">
+        <header class="topbar">
+            <a class="brand" href="#top"><img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/maskagent.png" alt="MaskAgent logo">MaskAgent</a>
+            <nav aria-label="Main navigation"><a href="#approach">Approach</a><a href="#proof">Proof</a><a href="team.html">Team</a><a class="nav-button" href="developers.html">Developers ↗</a></nav>
+            <div class="partners" aria-label="Project partners"><img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/isro.webp" alt="ISRO logo"><img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/sih2026.png" alt="Smart India Hackathon 2026 logo"></div>
+        </header>
+        <main id="top">
+            <section class="hero"><div class="hero-copy reveal"><p class="eyebrow">SIH 2026 / Problem ID SIH26171</p><h1>Let AI see.<br><span>Keep data private.</span></h1><p>On-device visual perception for lightweight browser agents. MaskAgent understands a web page, masks sensitive context, and acts locally through Ollama.</p><div class="actions"><a class="button primary" href="#approach">Explore the system <span>↘</span></a><a class="button secondary" href="#proof">Watch the demo <span>▶</span></a></div></div><div class="hero-visual reveal"><div class="orbit"></div><img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/maskagent.png" alt="MaskAgent project mark"></div></section>
+            <div class="statbar reveal"><div class="stat"><strong>100% local</strong><span>AI inference via Ollama</span></div><div class="stat"><strong>Before AI</strong><span>PII is detected and redacted first</span></div><div class="stat"><strong>Lightweight</strong><span>DOM + visual page understanding</span></div></div>
+            <section id="approach" class="reveal"><div class="section-head"><h2>A privacy layer<br>before intelligence.</h2><p>Traditional browser agents pass raw page context to an AI service. MaskAgent inserts a deliberate boundary: understand the interface, remove the secrets, then let a local model decide.</p></div><div class="pipeline"><article class="step"><div class="step-num">01</div><h3>Web page</h3><p>The user opens a real page with its content and interface.</p></article><article class="step"><div class="step-num">02</div><h3>Scan UI</h3><p>DOM structure and visible elements are mapped for context.</p></article><article class="step"><div class="step-num">03</div><h3>Detect PII</h3><p>Names, email, phone, address and password fields are identified.</p></article><article class="step"><div class="step-num">04</div><h3>Redact</h3><p>Private values become safe placeholders before inference.</p></article><article class="step"><div class="step-num">05</div><h3>Act locally</h3><p>Ollama chooses a browser action from the sanitized context.</p></article></div></section>
+            <section class="dark-band"><div class="wrap"><div class="section-head reveal"><h2>Small agent.<br>Serious guardrails.</h2><p>Built for useful browser automation without unrestricted access to personal information. Every action stays legible to the person using it.</p></div><div class="feature-grid reveal"><article class="feature"><div class="feature-icon">◉ / 01</div><h3>Privacy-preserving processing</h3><p>Redacts sensitive UI values before they enter an AI prompt.</p></article><article class="feature"><div class="feature-icon">⌁ / 02</div><h3>DOM + visual understanding</h3><p>Combines page structure with visible UI signals to find the right target.</p></article><article class="feature"><div class="feature-icon">↗ / 03</div><h3>Local browser actions</h3><p>Supports CLICK, TYPE, SCROLL, SELECT and DONE through a local model.</p></article><article class="feature"><div class="feature-icon">▤ / 04</div><h3>Human-readable activity</h3><p>An activity stream shows scans, redaction, decisions and execution.</p></article><article class="feature"><div class="feature-icon">⌬ / 05</div><h3>Action validation</h3><p>Checks whether a target exists and an intended action is relevant.</p></article><article class="feature"><div class="feature-icon">∞ / 06</div><h3>Research-ready foundation</h3><p>Designed to grow toward OCR, prompt-injection defense and cross-browser support.</p></article></div></div></section>
+            <section id="proof" class="reveal"><div class="section-head"><h2>See it<br>in motion.</h2><p>A working prototype is easiest to understand when the privacy boundary is visible. Explore the demo and interface captures below.</p></div><div class="proof"><figure class="media-card video-card"><iframe src="https://www.youtube.com/embed/jCiSNUajwM0" title="MaskAgent demonstration video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><figcaption>MaskAgent product demo <span>VIDEO / 01</span></figcaption></figure><figure class="media-card"><img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/1-Screenshot%20from%202026-08-23%2017-13-22.png" alt="MaskAgent privacy detection interface"><figcaption>Privacy detection interface <span>CAPTURE / 02</span></figcaption></figure><figure class="media-card"><img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/2-Screenshot%20from%202026-08-23%2017-18-08.png" alt="MaskAgent agent activity stream"><figcaption>Agent activity stream <span>CAPTURE / 03</span></figcaption></figure></div></section>
+            <section id="team" class="reveal"><div class="team"><div><img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/immortal6.png" alt="The MaskAgent team"></div><div class="team-copy"><p class="eyebrow">The people behind the prototype</p><h2>Built for the next web.</h2><p>MaskAgent is a Smart India Hackathon 2026 project exploring how browser agents can be capable and privacy-conscious at the same time.</p><div class="callout">“Private information should be protected before AI processing, not after it.”</div><div class="actions"><a class="button primary" href="team.html">Meet the team <span>↗</span></a></div></div></div></section>
+            <section class="reveal"><div class="details"><div><h3>Technology stack</h3><ul><li><strong>Interface:</strong> HTML, CSS, JavaScript, Chrome Extension APIs</li><li><strong>Inference:</strong> Ollama with DeepSeek-Coder</li><li><strong>Browser:</strong> Chrome, Brave and Chromium-compatible browsers</li></ul></div><div><h3>What comes next</h3><ul><li>OCR-based visual PII detection</li><li>Prompt-injection protection and permissioned actions</li><li>Structured decisions, better planning and Firefox support</li></ul></div></div></section>
+        </main>
+        <footer><div><strong>MaskAgent</strong><br>On-device visual perception for browser agents.</div><div class="mono">Smart India Hackathon 2026 · SIH26171</div></footer>
+    </div>
+    <script>const observer=new IntersectionObserver((entries)=>entries.forEach((entry)=>{if(entry.isIntersecting){entry.target.classList.add('visible');observer.unobserve(entry.target);}}),{threshold:.12});document.querySelectorAll('.reveal').forEach((element)=>observer.observe(element));</script>
 </body>
 </html>
