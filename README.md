@@ -1,341 +1,218 @@
-# MaskAgent (SIH26171) 🛡️🤖
-### On-Device AI Browser Agent for Privacy-Preserving Web Automation
+<div align="center">
 
-> **See the page. Protect the data. Let AI act.**
+<img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/maskagent.png" alt="MaskAgent" width="150">
 
-MaskAgent is a privacy-focused Manifest V3 browser extension built for **SIH26171** that combines **on-device privacy protection**, **DOM/UI understanding**, and **local AI-powered browser automation**.
+# MaskAgent
 
-Instead of blindly sending a webpage containing personal information to an AI model, MaskAgent first identifies sensitive information such as names, email addresses, phone numbers, addresses, passwords, and other personally identifiable information (PII).
+### On-device visual perception for lightweight browser agents
 
-The sensitive content is then **masked/redacted before AI processing**.
+**Smart India Hackathon 2026 · Problem Statement ID: SIH26171**
 
-MaskAgent can then use a local AI model through **Ollama** (`DeepSeek-Coder` by default) to understand the sanitized webpage and determine browser actions.
+[Open the project site](https://bhuvanesh-m-dev.github.io/maskagent/) · [Developers guide](https://bhuvanesh-m-dev.github.io/maskagent/developers.html) · [Meet the team](https://bhuvanesh-m-dev.github.io/maskagent/team.html)
+
+<br>
+
+<img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/isro.webp" alt="ISRO" height="70">&nbsp;&nbsp;&nbsp;&nbsp;
+<img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/sih2026.png" alt="Smart India Hackathon 2026" height="70">
+
+</div>
 
 ---
 
-## ✨ Core Idea
+## Overview
 
-Traditional AI browser agents can potentially expose sensitive information because the webpage context may be sent directly to an AI service.
+MaskAgent is a privacy-focused Manifest V3 browser extension that helps lightweight browser agents understand and interact with web pages without exposing raw personal information to an AI model.
 
-MaskAgent follows a different approach:
+It combines:
 
-```text
-                    🌐 WEBPAGE
-                        │
-                        ▼
-              ┌──────────────────┐
-              │  DOM + UI Scan   │
-              └────────┬─────────┘
-                       │
-                       ▼
-              ┌──────────────────┐
-              │ Privacy Detection│
-              │   & Redaction    │
-              └────────┬─────────┘
-                       │
-                       ▼
-              ┌──────────────────┐
-              │ Sanitized Context│
-              └────────┬─────────┘
-                       │
-                       ▼
-              ┌──────────────────┐
-              │ Local AI / Ollama│
-              │  DeepSeek-Coder  │
-              └────────┬─────────┘
-                       │
-                       ▼
-              ┌──────────────────┐
-              │ Action Decision  │
-              └────────┬─────────┘
-                       │
-                       ▼
-              ┌──────────────────┐
-              │ Browser Action   │
-              │ Click / Type /   │
-              │ Scroll / Select  │
-              └──────────────────┘
-```
+- DOM and visible UI understanding
+- On-device PII detection and redaction
+- Local AI inference through Ollama
+- Validated browser actions
+- A human-readable activity stream
 
-The principle is simple:
+The core principle is simple:
 
 > **Private information should be protected before AI processing, not after it.**
 
----
+## Why MaskAgent?
 
-## 🔐 Why MaskAgent?
+Browser agents can find buttons, read page structure, fill forms, navigate websites, and perform repetitive tasks. However, a page may also contain names, email addresses, phone numbers, addresses, passwords, and other sensitive information.
 
-Modern browser agents can perform useful tasks such as:
-- Finding buttons
-- Reading webpage structure
-- Filling forms
-- Clicking elements
-- Navigating websites
-- Understanding webpage content
-
-However, webpages frequently contain sensitive information.
-
-For example:
-```text
-Name: John Alexander
-Email: john.alexander@gmail.com
-Phone: +91 9876543210
-Password: ************
-```
-
-Sending this information directly to an AI system can create unnecessary privacy exposure.
-
-MaskAgent attempts to solve this by introducing a privacy layer before AI reasoning.
+A traditional flow may send the complete page context to a remote AI service:
 
 ```text
-                WITHOUT MASKAGENT
-
-Webpage → AI
-           │
-           └── Personal data may be exposed
-
-
-                WITH MASKAGENT
-
-Webpage
-   ↓
-Privacy Detection
-   ↓
-Redaction
-   ↓
-Sanitized Context
-   ↓
-Local AI
+Web page -> Cloud AI
+             |
+             +-- Personal data may be exposed
 ```
 
----
-
-## 🚀 Features
-
-### 🔒 Privacy-Preserving AI Processing
-MaskAgent identifies potentially sensitive UI elements and masks them before AI processing.
-
-Examples include:
-- 👤 Names
-- 📧 Email addresses
-- 📱 Phone numbers
-- 🔑 Passwords
-- 🏠 Addresses
-- 🎂 Dates of birth
-- 🪪 Other personally identifiable information
-
-### 🖥️ DOM + Visual Understanding
-MaskAgent can work with webpage structure and visual context to understand the current page.
-
-The extension can identify:
-- Text fields
-- Buttons
-- Form elements
-- Labels
-- Links
-- Page structure
-- Visible UI elements
-
-### 🧠 Local AI
-MaskAgent communicates with a locally running AI model through Ollama.
-
-**Default model:** `deepseek-coder` (also supports `deepseek-coder:6.7b`, `llava`, `qwen2.5-vl`).
-
-The AI runs locally instead of requiring the webpage context to be sent to a remote AI API.
-
-### 🤖 Browser Agent
-The agent can reason about the next browser action.
-
-Supported actions include:
-- `CLICK`
-- `TYPE`
-- `SCROLL`
-- `SELECT`
-- `DONE` / `FINISH`
-
-The agent follows the user's requested objective and attempts to perform the required action on the webpage.
-
-### 📊 Agent Activity Stream
-MaskAgent provides an activity stream showing what the agent is doing in real time.
-
-Example:
-```text
-[5:31:44 PM] Starting MaskAgent task
-[5:31:44 PM] Privacy Redaction: ON
-[5:31:44 PM] Agent started
-[5:31:44 PM] Executing Step 1/5
-[5:31:45 PM] Privately masked sensitive UI elements
-[5:31:45 PM] Consulting local Ollama model
-[5:31:47 PM] Ollama response received
-[5:31:47 PM] AI Decision: CLICK
-```
-This makes the agent's behavior easy to understand and debug.
-
----
-
-## 🏗️ Project Architecture
+MaskAgent creates a privacy boundary before reasoning:
 
 ```text
-┌──────────────────────────────────────────┐
-│                Browser                   │
-│                                          │
-│  ┌────────────────────────────────────┐  │
-│  │           MaskAgent                │  │
-│  │                                    │  │
-│  │  ┌──────────────┐                  │  │
-│  │  │ Popup UI     │                  │  │
-│  │  └──────┬───────┘                  │  │
-│  │         │                          │  │
-│  │  ┌──────▼───────┐                  │  │
-│  │  │ Background   │                  │  │
-│  │  │ Service      │                  │  │
-│  │  └──────┬───────┘                  │  │
-│  │         │                          │  │
-│  │  ┌──────▼───────┐                  │  │
-│  │  │ Content      │                  │  │
-│  │  │ Script       │                  │  │
-│  │  └──────┬───────┘                  │  │
-│  │         │                          │  │
-│  │         ▼                          │  │
-│  │   DOM / UI Analysis                │  │
-│  │         │                          │  │
-│  │         ▼                          │  │
-│  │   Privacy Redaction                │  │
-│  └─────────┬──────────────────────────┘  │
-│            │                             │
-└────────────┼─────────────────────────────┘
-             │
-             │ Local API (http://localhost:11434)
-             ▼
-┌──────────────────────────────────────────┐
-│                 Ollama                   │
-│                                          │
-│          DeepSeek-Coder                  │
-│                                          │
-│       Local AI Inference                 │
-└──────────────────────────────────────────┘
+Web page
+   |
+   v
+DOM + visual UI scan
+   |
+   v
+Sensitive data detection
+   |
+   v
+Redaction and masking
+   |
+   v
+Sanitized page context
+   |
+   v
+Local AI through Ollama
+   |
+   v
+Validated browser action
 ```
 
----
+The model can understand the page structure and decide what to do without receiving the original sensitive values.
 
-## 📁 Project Structure
+## Key capabilities
+
+### Privacy-preserving processing
+
+MaskAgent attempts to identify and mask sensitive values before they are included in the AI context. Current target categories include:
+
+- Names and personal identifiers
+- Email addresses
+- Phone numbers
+- Addresses
+- Password fields
+- Dates of birth and other PII
+
+### DOM and visual understanding
+
+The extension combines page structure with visible interface context to identify:
+
+- Text fields and password fields
+- Buttons and links
+- Labels and form elements
+- Page regions and visible controls
+- Useful targets for browser actions
+
+### Local AI inference
+
+MaskAgent can communicate with an Ollama server running on the user's device. The default development model is `deepseek-coder`; compatible local models can be configured for different workloads.
+
+No webpage context needs to be sent to a hosted AI API when the local setup is used.
+
+### Browser agent actions
+
+The agent can reason about and execute structured actions such as:
+
+```text
+CLICK   TYPE   SCROLL   SELECT   DONE
+```
+
+Actions should be checked against the page and user intent before execution.
+
+### Activity stream
+
+The extension exposes the agent's progress so the user can understand what happened:
+
+```text
+[task] Starting MaskAgent task
+[privacy] Redaction: ON
+[scan] Inspecting DOM and visible UI
+[mask] Sensitive elements sanitized
+[model] Consulting local Ollama model
+[action] Decision: CLICK
+[done] Action validated and completed
+```
+
+## Project architecture
+
+```text
++------------------------------------------------+
+| Browser                                        |
+|                                                |
+|  +------------------------------------------+  |
+|  | MaskAgent extension                      |  |
+|  |                                          |  |
+|  | Popup UI -> Background service           |  |
+|  |                 |                        |  |
+|  |                 v                        |  |
+|  |          Content script                  |  |
+|  |                 |                        |  |
+|  |                 v                        |  |
+|  |       DOM/UI analysis + PII masking      |  |
+|  +-----------------+------------------------+  |
+|                    |                           |
++--------------------|---------------------------+
+                     | Local API
+                     v
+             Ollama / local model
+             DeepSeek-Coder or another model
+```
+
+## Repository structure
 
 ```text
 MaskAgent/
-├── background.js     # Background service worker & Ollama AI API orchestration
-├── content.js        # Webpage interaction, DOM processing & privacy PII detection
-├── popup.html        # Extension dark glassmorphism interface
-├── popup.js          # Popup controls, state sync & agent execution logic
-├── styles.css        # Extension UI design system
-├── manifest.json     # Manifest V3 extension configuration
-├── icon16.png        # 16×16 extension toolbar icon
-├── icon48.png        # 48×48 extension icon
-├── icon128.png       # 128×128 extension icon
-└── README.md         # Project documentation
+├── manifest.json       Manifest V3 extension configuration
+├── background.js       Service worker and Ollama communication
+├── content.js          DOM interaction and privacy processing
+├── popup.html          Extension popup interface
+├── popup.js            Popup controls and agent execution
+├── styles.css          Extension interface styles
+├── icon16.png          Toolbar icon
+├── icon48.png          Extension icon
+├── icon128.png         Extension icon
+├── index.html          Project landing page
+├── team.html           Team showcase page
+├── developers.html     Developer documentation page
+└── README.md           Project documentation
 ```
 
-### File Description
+## Technology stack
 
-| File | Purpose |
+| Area | Technology |
 | :--- | :--- |
-| `manifest.json` | Chrome extension configuration (Manifest V3) |
-| `background.js` | Background/service-worker logic and AI communication |
-| `content.js` | Webpage interaction, DOM processing and privacy handling |
-| `popup.html` | MaskAgent extension interface |
-| `popup.js` | Popup controls and agent execution logic |
-| `styles.css` | Extension UI styling |
-| `icon16.png` | 16×16 extension icon |
-| `icon48.png` | 48×48 extension icon |
-| `icon128.png` | 128×128 extension icon |
-| `README.md` | Project documentation |
+| Extension | HTML5, CSS3, JavaScript, Chrome Extension APIs |
+| Extension standard | Manifest V3 |
+| Local AI | Ollama and DeepSeek-Coder |
+| Privacy layer | DOM-based PII detection, masking, redaction |
+| Browser support | Chrome, Brave, Edge, and Chromium-compatible browsers |
+| Development environments | Linux, Windows, and macOS |
 
----
+## Quick start
 
-## 🛠️ Technology Stack
+### Requirements
 
-- **Frontend**: HTML5, CSS3, JavaScript (ES6+), Chrome Extension APIs (Manifest V3)
-- **AI Engine**: Ollama, `deepseek-coder` (Local LLM inference)
-- **Privacy Engine**: DOM-based PII detection, Canvas UI element masking/redaction, Password masking, Sanitized AI context
-- **Browser Compatibility**: Chromium-based browsers (Google Chrome, Brave, Microsoft Edge)
+1. A Chromium-based browser such as Chrome, Brave, or Edge
+2. Ollama installed and running locally
+3. A compatible local model
+4. The MaskAgent source folder
 
----
+### Install and configure Ollama
 
-## ⚙️ Requirements
+Verify Ollama:
 
-Before running MaskAgent, make sure you have:
-1. A Chromium-based browser (Chrome / Brave / Edge)
-2. Operating System: Linux / Windows / macOS
-3. Ollama installed & running at `http://localhost:11434`
-4. Model installed: `deepseek-coder`
-5. MaskAgent source code
-
-```text
-Browser → MaskAgent → Ollama → DeepSeek-Coder
-```
-
----
-
-## 🧠 Installing Ollama
-
-Install Ollama on your system and verify it:
 ```bash
 ollama --version
-```
-
-Check installed models:
-```bash
 ollama list
 ```
 
-If `deepseek-coder` is not installed, pull it using Ollama:
+Install the default development model if necessary:
+
 ```bash
 ollama pull deepseek-coder
 ```
 
-Then verify:
-```bash
-ollama list
-```
+Test the local API:
 
----
-
-## 🔌 Configure Ollama for the Browser Extension
-
-Because MaskAgent is a browser extension communicating with a local Ollama server, the extension origin must be allowed.
-
-On Linux systems where Ollama runs as a systemd service:
-```bash
-sudo systemctl edit ollama.service
-```
-
-Add:
-```ini
-[Service]
-Environment="OLLAMA_ORIGINS=chrome-extension://*"
-```
-
-Save and exit. Then run:
-```bash
-sudo systemctl daemon-reload
-sudo systemctl restart ollama
-```
-
-Verify the environment:
-```bash
-systemctl show ollama --property=Environment --no-pager
-```
-You should see: `OLLAMA_ORIGINS=chrome-extension://*`
-
----
-
-## 🧪 Test Ollama Connection
-
-First test the Ollama API:
 ```bash
 curl http://localhost:11434/api/tags
 ```
 
-Then test model inference:
+Test model generation:
+
 ```bash
 curl http://localhost:11434/api/generate \
   -H "Content-Type: application/json" \
@@ -346,290 +223,152 @@ curl http://localhost:11434/api/generate \
   }'
 ```
 
----
+### Allow the extension origin
 
-## 🌐 Install MaskAgent in Chrome / Edge / Brave
+If Ollama runs as a Linux systemd service, open an override file:
 
-1. Open `chrome://extensions` (or `edge://extensions` / `brave://extensions`).
-2. Enable **Developer mode** (toggle in the top-right corner).
-3. Click **Load unpacked**.
-4. Select the `MaskAgent` project folder.
-5. MaskAgent will appear in your extension list!
-
----
-
-## 🔄 After Changing the Code
-
-Whenever you modify the extension source code:
-```text
-Extension Reload → Refresh Webpage → Open MaskAgent → Run Agent
+```bash
+sudo systemctl edit ollama.service
 ```
 
----
+Add:
 
-## 🧪 Testing MaskAgent
+```ini
+[Service]
+Environment="OLLAMA_ORIGINS=chrome-extension://*"
+```
 
-### Example Test HTML Page
-You can create a local test HTML file containing test data:
+Then reload the service:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart ollama
+systemctl show ollama --property=Environment --no-pager
+```
+
+### Load the extension
+
+1. Open `chrome://extensions` or the equivalent extensions page.
+2. Enable **Developer mode**.
+3. Select **Load unpacked**.
+4. Choose the MaskAgent project folder.
+5. Open the extension popup and run a task on a test page.
+
+For the full developer workflow, architecture notes, and action contract, visit the [MaskAgent Developers Guide](https://bhuvanesh-m-dev.github.io/maskagent/developers.html).
+
+## Safe testing
+
+Use synthetic data only. Never test with real passwords, banking information, government IDs, private documents, or confidential company data.
+
+Example test values:
 
 ```html
-<!DOCTYPE html>
-<html>
-<head>
-    <title>MaskAgent Privacy Test</title>
-</head>
-<body>
-    <h1>MaskAgent Privacy Test</h1>
+<label>Full Name</label>
+<input type="text" value="John Alexander">
 
-    <label>Full Name</label>
-    <input type="text" value="John Alexander">
+<label>Email</label>
+<input type="email" value="john.alexander@example.com">
 
-    <br><br>
+<label>Phone</label>
+<input type="tel" value="+91 9876543210">
 
-    <label>Email</label>
-    <input type="email" value="john.alexander@example.com">
-
-    <br><br>
-
-    <label>Phone</label>
-    <input type="tel" value="+91 9876543210">
-
-    <br><br>
-
-    <label>Password</label>
-    <input type="password" value="TestPassword123">
-
-    <br><br>
-
-    <button>Submit</button>
-</body>
-</html>
+<label>Password</label>
+<input type="password" value="TestPassword123">
 ```
 
-### 🔐 Privacy Test Prompt
-> "Scan this webpage for sensitive personal information such as names, email addresses, phone numbers, dates of birth, addresses, passwords, and other personally identifiable information. Verify that sensitive elements are masked before AI processing while non-sensitive information remains visible."
+Useful prompts include:
 
-### 🎯 Browser Agent Test Prompts
-- **Test 1 — Page Understanding**: *"Identify all form fields on this page. Do not change or submit anything."*
-- **Test 2 — Element Detection**: *"Find the Submit button on this page. Do not click it."*
-- **Test 3 — Browser Action**: *"Click the Submit button."*
-- **Test 4 — Form Interaction**: *"Enter 'Test' into the First Name field and 'User' into the Last Name field."*
-- **Test 5 — Privacy Detection**: *"Identify all sensitive personal information on this page. Verify that sensitive information is masked before AI processing."*
+- Identify all form fields without changing them.
+- Find the Submit button without clicking it.
+- Identify sensitive information and verify that it is masked.
+- Enter test data into a named field without submitting the form.
 
----
+## Privacy demonstration
 
-## 🔐 Privacy Demonstration
-
-The core difference between raw webpage information and AI-visible information:
-
-| Original Webpage | Sanitized AI Context |
-| :--- | :--- |
-| **Name:** John Alexander | **Name:** `[REDACTED]` |
-| **Email:** john.alexander@gmail.com | **Email:** `[REDACTED]` |
-| **Phone:** +91 9876543210 | **Phone:** `[REDACTED]` |
-| **Address:** 12 Example Street | **Address:** `[REDACTED]` |
-| **Password:** ******** | **Password:** `[REDACTED]` |
-
-The AI understands the structure without seeing the actual private values:
-- Email field → sensitive
-- Phone field → sensitive
-- Password field → sensitive
-- Submit button → normal UI element
-
----
-
-## 🔄 How MaskAgent Works
+Before masking:
 
 ```text
-1. User provides a task
-            ↓
-2. MaskAgent scans the webpage
-            ↓
-3. DOM/UI elements are identified
-            ↓
-4. Sensitive information is detected
-            ↓
-5. Sensitive information is masked
-            ↓
-6. Sanitized context is prepared
-            ↓
-7. Local Ollama model receives context
-            ↓
-8. AI determines the next action
-            ↓
-9. MaskAgent validates the action
-            ↓
-10. Browser performs the action
-            ↓
-11. Page state is re-checked
-            ↓
-12. Agent completes or continues task
+Name:     John Alexander
+Email:    john.alexander@gmail.com
+Phone:    +91 9876543210
+Address:  12 Example Street, Chennai
+Password: ********
 ```
 
----
-
-## 🛡️ Privacy Architecture
+AI-visible context after masking:
 
 ```text
-              RAW WEBPAGE
-                   │
-                   ▼
-          ┌─────────────────┐
-          │ Privacy Layer   │
-          └────────┬────────┘
-                   │
-           Sensitive Data
-              REDACTED
-                   │
-                   ▼
-          ┌─────────────────┐
-          │ Sanitized Data  │
-          └────────┬────────┘
-                   │
-                   ▼
-          ┌─────────────────┐
-          │ Local AI Model  │
-          └─────────────────┘
+Name:     [REDACTED]
+Email:    [REDACTED]
+Phone:    [REDACTED]
+Address:  [REDACTED]
+Password: [REDACTED]
 ```
 
----
+The goal is to preserve useful meaning such as `Email field -> sensitive` and `Submit button -> normal UI element` while removing the original values.
 
-## ⚠️ Security Considerations
+## Development status
 
-MaskAgent is currently a research/development prototype.
+### Working areas
 
-Do not test the extension with real:
-- Passwords
-- Banking information
-- Credit/debit card numbers
-- Government identification numbers
-- Private documents
-- Confidential company information
+- Browser extension structure and popup UI
+- DOM processing and privacy masking
+- Local Ollama integration
+- Basic browser action execution
+- Activity stream and local privacy testing
 
-*Use synthetic test data during development.*
+### In progress
 
----
+- More accurate PII and visual PII detection
+- OCR-based visual perception
+- Structured model responses
+- Stronger action validation
+- Prompt-injection protection
+- Better task completion detection
+- Performance and cross-browser testing
 
-## 🧪 Current Development Status
+## Roadmap
 
-### Completed
-- [x] Browser extension structure (MV3)
-- [x] MaskAgent popup UI
-- [x] DOM processing
-- [x] Privacy masking/redaction (DOM + Canvas)
-- [x] Local Ollama integration
-- [x] DeepSeek-Coder model integration
-- [x] Chrome extension → Ollama communication
-- [x] Ollama CORS/origin configuration
-- [x] Agent activity stream
-- [x] Basic browser action execution
-- [x] Local privacy testing
+1. **Privacy:** Improve PII detection, password handling, OCR, and masking accuracy.
+2. **Agent intelligence:** Add structured actions, planning, validation, and completion detection.
+3. **Security:** Add prompt-injection detection, webpage instruction isolation, permission controls, and audit logs.
+4. **Performance:** Support lightweight models, context compression, and efficient DOM extraction.
+5. **Browser support:** Continue Chromium support and explore Firefox compatibility.
 
-### In Development
-- [ ] More accurate PII detection
-- [ ] Strict structured AI responses
-- [ ] Action validation & confirmation
-- [ ] Improved task completion detection
-- [ ] Prompt-injection protection
-- [ ] Performance optimization
-- [ ] Cross-browser testing
+## Limitations
 
----
+MaskAgent is a research and development prototype. Privacy detection can produce false positives or miss unusual formats. Dynamic pages, visual text, model mistakes, and unintended browser actions remain important areas for testing and improvement.
 
-## 📈 Future Roadmap
+Local models may also require significant CPU and memory depending on the selected model and hardware.
 
-- **Phase 1 — Privacy**: DOM PII masking, Password masking, Email detection, Phone detection, Advanced PII detection, Visual OCR-based PII detection.
-- **Phase 2 — Agent Intelligence**: Local LLM integration, Browser action execution, Structured JSON actions, Action validation, Task completion detection.
-- **Phase 3 — Security**: Prompt injection detection, Webpage instruction isolation, Action permission system, Privacy audit log.
-- **Phase 4 — Performance**: Lightweight model support, CPU optimization, Reduced inference latency, Efficient DOM extraction.
-- **Phase 5 — Browser Support**: Chromium development (Chrome, Brave, Edge), Firefox compatibility.
+## Team
 
----
+<img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/immortal6.png" alt="MaskAgent team members" width="100%">
 
-## 📊 Privacy-First Comparison
+The MaskAgent team:
 
-| Capability | Traditional Cloud Agent | MaskAgent |
-| :--- | :---: | :---: |
-| Browser understanding | ✅ | ✅ |
-| AI automation | ✅ | ✅ |
-| Local AI inference | ❌ / Optional | ✅ |
-| Pre-AI privacy layer | Usually ❌ | ✅ |
-| DOM redaction | Usually ❌ | ✅ |
-| Password masking | Depends | ✅ |
-| Local Ollama support | ❌ | ✅ |
-| Activity monitoring | Depends | ✅ |
-| **Privacy-focused architecture** | Limited | ⭐ **Core objective** |
+- Bhuvanesh M
+- Hariseh Sanjay R
+- Mohamed Saajid S
+- Mohan Kumar S
+- Preethi Kumari R
+- Sharon Rose C
 
----
+Read the full team story at the [MaskAgent Team page](https://bhuvanesh-m-dev.github.io/maskagent/team.html).
 
-## 🖥️ Example Agent Flow
+## Project links
 
-```text
-USER
- │
- │ "Find the Submit button"
- ▼
-MASKAGENT
- │
- ├── Scan webpage
- ├── Detect sensitive information
- ├── Mask sensitive elements
- └── Create sanitized context
- │
- ▼
-LOCAL OLLAMA (DeepSeek-Coder)
- │
- ▼
-AI DECISION
- │
- └── CLICK → submit_button
- │
- ▼
-ACTION VALIDATOR
- │
- ├── Is action allowed?
- ├── Does target exist?
- └── Is target relevant?
- │
- ▼
-BROWSER
- │
- └── Click Submit
-```
+- [Project landing page](https://bhuvanesh-m-dev.github.io/maskagent/)
+- [Developer documentation](https://bhuvanesh-m-dev.github.io/maskagent/developers.html)
+- [Team page](https://bhuvanesh-m-dev.github.io/maskagent/team.html)
+- [MaskAgent source repository](https://github.com/bhuvanesh-m-dev/maskagent)
 
----
 
-## 👨‍💻 Author
+<div align="center">
 
-**BHUVANESH M**
-*Computer Science & Engineering*
-*AI • Machine Learning • GenAI • Software Development*
+**See the web. Protect the user. Act locally.**
 
----
+<img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/isro.webp" alt="ISRO" height="55">&nbsp;&nbsp;
+<img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/sih2026.png" alt="Smart India Hackathon 2026" height="55">
 
-## ⭐ Project Vision
-
-MaskAgent explores a simple but important question:
-
-> **Can AI agents interact with the web without needing unrestricted access to our private information?**
-
-```text
-             AI AGENT
-                │
-        ┌───────▼────────┐
-        │ Privacy Layer  │
-        └───────┬────────┘
-                │
-        ┌───────▼────────┐
-        │ Local Context  │
-        └───────┬────────┘
-                │
-        ┌───────▼────────┐
-        │ Local AI Model │
-        └───────┬────────┘
-                │
-                ▼
-          BROWSER ACTION
-```
-
-*See the web. Protect the user. Act locally.*
+</div>
