@@ -1,0 +1,1814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaskAgent · Developer Documentation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================
+           RESET & BASE
+           ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #1c2333;
+            --border: #30363d;
+            --text: #e6edf3;
+            --text-secondary: #8b949e;
+            --text-muted: #484f58;
+            --accent: #58a6ff;
+            --accent-hover: #79c0ff;
+            --green: #3fb950;
+            --orange: #d29922;
+            --red: #f85149;
+            --purple: #bc8cff;
+            --cyan: #58a6ff;
+            --code-bg: #0d1117;
+            --code-border: #30363d;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+            --radius: 8px;
+            --radius-sm: 4px;
+            --transition: 0.2s ease;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: color var(--transition);
+        }
+
+        a:hover {
+            color: var(--accent-hover);
+        }
+
+        /* ============================================
+           LAYOUT
+           ============================================ */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ============================================
+           TOP BAR
+           ============================================ */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(13, 17, 23, 0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 0;
+        }
+
+        .topbar .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .topbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text);
+        }
+
+        .topbar-brand img {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+        }
+
+        .topbar-brand span {
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .topbar-nav {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 0.875rem;
+            flex-wrap: wrap;
+        }
+
+        .topbar-nav a {
+            color: var(--text-secondary);
+            transition: color var(--transition);
+        }
+
+        .topbar-nav a:hover {
+            color: var(--text);
+        }
+
+        .topbar-nav .badge {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            border: 1px solid var(--border);
+        }
+
+        /* ============================================
+           HERO / HEADER
+           ============================================ */
+        .page-header {
+            padding: 60px 0 40px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 48px;
+        }
+
+        .page-header h1 {
+            font-size: 2.6rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.15;
+        }
+
+        .page-header h1 small {
+            color: var(--text-secondary);
+            font-weight: 400;
+            font-size: 1.2rem;
+            display: block;
+            margin-top: 8px;
+        }
+
+        .page-header .sub {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            margin-top: 12px;
+            max-width: 640px;
+        }
+
+        .page-header .meta {
+            display: flex;
+            gap: 24px;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            flex-wrap: wrap;
+        }
+
+        .page-header .meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* ============================================
+           DOCS LAYOUT
+           ============================================ */
+        .docs-wrapper {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 48px;
+            padding-bottom: 80px;
+        }
+
+        /* ============================================
+           SIDEBAR
+           ============================================ */
+        .sidebar {
+            position: sticky;
+            top: 88px;
+            align-self: start;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+            padding-right: 16px;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        .sidebar-section {
+            margin-bottom: 28px;
+        }
+
+        .sidebar-section h4 {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 2px;
+        }
+
+        .sidebar-nav a {
+            display: block;
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            transition: all var(--transition);
+        }
+
+        .sidebar-nav a:hover {
+            color: var(--text);
+            background: var(--bg-tertiary);
+        }
+
+        .sidebar-nav a.active {
+            color: var(--text);
+            background: var(--bg-tertiary);
+            font-weight: 500;
+        }
+
+        .sidebar-nav a .icon {
+            margin-right: 8px;
+            opacity: 0.5;
+        }
+
+        /* ============================================
+           CONTENT
+           ============================================ */
+        .content {
+            min-width: 0;
+        }
+
+        .content section {
+            margin-bottom: 60px;
+        }
+
+        .content h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .content h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 36px;
+            margin-bottom: 14px;
+        }
+
+        .content h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 28px;
+            margin-bottom: 10px;
+            color: var(--text-secondary);
+        }
+
+        .content p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .content ul, .content ol {
+            color: var(--text-secondary);
+            padding-left: 24px;
+            margin-bottom: 16px;
+        }
+
+        .content li {
+            margin-bottom: 6px;
+        }
+
+        .content strong {
+            color: var(--text);
+        }
+
+        .content code {
+            font-family: var(--font-mono);
+            font-size: 0.85em;
+            background: var(--bg-tertiary);
+            padding: 2px 8px;
+            border-radius: var(--radius-sm);
+            color: var(--cyan);
+        }
+
+        .content pre {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            line-height: 1.8;
+            color: var(--text);
+        }
+
+        .content pre code {
+            background: transparent;
+            padding: 0;
+            color: inherit;
+            font-size: inherit;
+        }
+
+        .content .callout {
+            background: var(--bg-tertiary);
+            border-left: 4px solid var(--accent);
+            padding: 16px 20px;
+            border-radius: var(--radius-sm);
+            margin: 20px 0;
+        }
+
+        .content .callout.warning {
+            border-left-color: var(--orange);
+        }
+
+        .content .callout.danger {
+            border-left-color: var(--red);
+        }
+
+        .content .callout.success {
+            border-left-color: var(--green);
+        }
+
+        .content .callout strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.9rem;
+        }
+
+        .content table th,
+        .content table td {
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .content table th {
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .content table td {
+            color: var(--text-secondary);
+        }
+
+        .content .file-path {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--accent);
+            background: var(--bg-tertiary);
+            padding: 2px 10px;
+            border-radius: var(--radius-sm);
+            display: inline-block;
+        }
+
+        .content .badge-tech {
+            display: inline-block;
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            padding: 1px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            border: 1px solid var(--border);
+            margin-right: 6px;
+        }
+
+        /* ============================================
+           ARCHITECTURE DIAGRAM
+           ============================================ */
+        .diagram {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px 24px;
+            margin: 24px 0;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            line-height: 2;
+            overflow-x: auto;
+            white-space: pre;
+            color: var(--text-secondary);
+        }
+
+        .diagram .highlight {
+            color: var(--accent);
+        }
+        .diagram .highlight-green {
+            color: var(--green);
+        }
+        .diagram .highlight-orange {
+            color: var(--orange);
+        }
+        .diagram .arrow {
+            color: var(--text-muted);
+        }
+
+        /* ============================================
+           TOC
+           ============================================ */
+        .toc {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            margin: 24px 0;
+        }
+
+        .toc h4 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .toc ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .toc ul li {
+            margin-bottom: 4px;
+        }
+
+        .toc ul li a {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .toc ul li a:hover {
+            color: var(--text);
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 32px 0 48px;
+            margin-top: 24px;
+        }
+
+        .footer .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .footer a {
+            color: var(--text-secondary);
+        }
+
+        .footer a:hover {
+            color: var(--text);
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 900px) {
+            .docs-wrapper {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .sidebar {
+                position: relative;
+                top: 0;
+                max-height: none;
+                overflow-y: visible;
+                padding-right: 0;
+                border-bottom: 1px solid var(--border);
+                padding-bottom: 24px;
+                margin-bottom: 24px;
+            }
+
+            .sidebar-section {
+                margin-bottom: 16px;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .topbar-nav {
+                gap: 12px;
+            }
+
+            .topbar-nav .badge {
+                display: none;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 0 16px;
+            }
+
+            .page-header {
+                padding: 32px 0 24px;
+            }
+
+            .page-header h1 {
+                font-size: 1.6rem;
+            }
+
+            .page-header h1 small {
+                font-size: 1rem;
+            }
+
+            .content h2 {
+                font-size: 1.4rem;
+            }
+
+            .content pre {
+                padding: 14px 16px;
+                font-size: 0.75rem;
+            }
+
+            .topbar {
+                padding: 12px 0;
+            }
+
+            .topbar-brand {
+                font-size: 0.95rem;
+            }
+
+            .topbar-nav a {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==========================================
+    TOP BAR
+    ========================================== -->
+    <header class="topbar">
+        <div class="container">
+            <div class="topbar-brand">
+                <img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/maskagent.png" alt="MaskAgent">
+                MaskAgent
+                <span>· dev</span>
+            </div>
+            <nav class="topbar-nav">
+                <a href="#overview">Overview</a>
+                <a href="#architecture">Architecture</a>
+                <a href="#codebase">Codebase</a>
+                <a href="#pipeline">Pipeline</a>
+                <a href="#privacy">Privacy</a>
+                <a href="#ollama">Ollama</a>
+                <a href="#extending">Extending</a>
+                <span class="badge">SIH26171</span>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ==========================================
+    PAGE HEADER
+    ========================================== -->
+    <section class="page-header">
+        <div class="container">
+            <h1>
+                MaskAgent
+                <small>Developer Documentation</small>
+            </h1>
+            <p class="sub">
+                A Manifest V3 Chrome extension for privacy-preserving browser automation
+                using local AI models via Ollama.
+            </p>
+            <div class="meta">
+                <span>📦 <a href="https://github.com/bhuvanesh-m-dev/maskagent">github.com/bhuvanesh-m-dev/maskagent</a></span>
+                <span>📄 MIT License</span>
+                <span>⚡ Chrome Extension · Manifest V3</span>
+                <span>🧠 Ollama · DeepSeek-Coder / LLaVA</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================
+    DOCS WRAPPER
+    ========================================== -->
+    <div class="container docs-wrapper">
+
+        <!-- ==========================================
+        SIDEBAR
+        ========================================== -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h4>Getting Started</h4>
+                <ul class="sidebar-nav">
+                    <li><a href="#overview" class="active">Overview</a></li>
+                    <li><a href="#quick-start">Quick Start</a></li>
+                    <li><a href="#requirements">Requirements</a></li>
+                    <li><a href="#installation">Installation</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <h4>Core</h4>
+                <ul class="sidebar-nav">
+                    <li><a href="#architecture">Architecture</a></li>
+                    <li><a href="#codebase">Codebase Guide</a></li>
+                    <li><a href="#pipeline">Agent Pipeline</a></li>
+                    <li><a href="#privacy">Privacy Architecture</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <h4>Configuration</h4>
+                <ul class="sidebar-nav">
+                    <li><a href="#ollama">Ollama Integration</a></li>
+                    <li><a href="#models">Models</a></li>
+                    <li><a href="#actions">Action Contract</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <h4>Development</h4>
+                <ul class="sidebar-nav">
+                    <li><a href="#testing">Testing</a></li>
+                    <li><a href="#debugging">Debugging</a></li>
+                    <li><a href="#extending">Extending</a></li>
+                    <li><a href="#contributing">Contributing</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <h4>Security</h4>
+                <ul class="sidebar-nav">
+                    <li><a href="#security-model">Security Model</a></li>
+                    <li><a href="#limitations">Limitations</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- ==========================================
+        CONTENT
+        ========================================== -->
+        <main class="content">
+
+            <!-- ======================================
+            OVERVIEW
+            ====================================== -->
+            <section id="overview">
+                <h2>Overview</h2>
+                <p>
+                    <strong>MaskAgent</strong> is a privacy-first browser automation tool that runs
+                    entirely on your local machine. It combines a Chrome extension with
+                    <a href="https://ollama.com">Ollama</a> to enable AI-driven browser interactions
+                    while automatically redacting sensitive information before it reaches the model.
+                </p>
+
+                <div class="callout success">
+                    <strong>Why MaskAgent?</strong>
+                    <ul style="margin-bottom:0">
+                        <li>🔒 <strong>Local-first:</strong> All AI inference runs on your machine via Ollama</li>
+                        <li>🛡️ <strong>Privacy-preserving:</strong> PII is detected and redacted before AI processing</li>
+                        <li>🎯 <strong>Goal-driven:</strong> Describe what you want, and the agent figures out the steps</li>
+                        <li>🔧 <strong>Extensible:</strong> Add new PII detectors, actions, or AI models</li>
+                    </ul>
+                </div>
+
+                <h3>What it Does</h3>
+                <p>
+                    Given a natural language goal (e.g., "Fill out this contact form" or
+                    "Extract the main article text"), MaskAgent:
+                </p>
+                <ol>
+                    <li>Analyzes the current page's DOM and visual state</li>
+                    <li>Detects and redacts PII (emails, phone numbers, passwords, etc.)</li>
+                    <li>Sends sanitized context to a local AI model via Ollama</li>
+                    <li>Receives structured actions (CLICK, TYPE, SCROLL, SELECT, DONE)</li>
+                    <li>Validates and executes actions on the page</li>
+                    <li>Repeats until the goal is achieved</li>
+                </ol>
+
+                <h3>What it Doesn't Do</h3>
+                <ul>
+                    <li><strong>No cloud dependencies</strong> — everything runs locally</li>
+                    <li><strong>No data storage</strong> — page data is processed ephemerally</li>
+                    <li><strong>No credential capture</strong> — passwords are redacted</li>
+                    <li><strong>No cross-origin automation</strong> — works within a single tab</li>
+                </ul>
+            </section>
+
+            <!-- ======================================
+            QUICK START
+            ====================================== -->
+            <section id="quick-start">
+                <h2>Quick Start</h2>
+
+                <h3>1. Clone the repository</h3>
+                <pre><code>git clone https://github.com/bhuvanesh-m-dev/maskagent.git
+cd maskagent</code></pre>
+
+                <h3>2. Install Ollama & pull a model</h3>
+                <pre><code># Install Ollama (macOS/Linux)
+curl -fsSL https://ollama.com/install.sh | sh
+
+# Pull a supported model
+ollama pull deepseek-coder
+
+# Verify models
+ollama list</code></pre>
+
+                <h3>3. Load the extension in Chrome</h3>
+                <ol>
+                    <li>Open <code>chrome://extensions/</code></li>
+                    <li>Enable <strong>Developer Mode</strong></li>
+                    <li>Click <strong>Load unpacked</strong></li>
+                    <li>Select the <code>maskagent/code_files/</code> directory</li>
+                </ol>
+
+                <h3>4. Run your first agent</h3>
+                <ol>
+                    <li>Navigate to any webpage</li>
+                    <li>Click the MaskAgent extension icon</li>
+                    <li>Enter a goal (e.g., "Find and click the login button")</li>
+                    <li>Click <strong>Run Agent</strong></li>
+                </ol>
+
+                <div class="callout">
+                    <strong>📖 Next Steps</strong>
+                    <p style="margin-bottom:0">
+                        See <a href="#architecture">Architecture</a> to understand the system,
+                        or <a href="#codebase">Codebase Guide</a> to dive into the source.
+                    </p>
+                </div>
+            </section>
+
+            <!-- ======================================
+            REQUIREMENTS
+            ====================================== -->
+            <section id="requirements">
+                <h2>Requirements</h2>
+
+                <table>
+                    <thead>
+                        <tr><th>Component</th><th>Requirement</th><th>Notes</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Browser</strong></td>
+                            <td>Chrome 88+ / Brave / Edge</td>
+                            <td>Manifest V3 support required</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ollama</strong></td>
+                            <td>Latest version</td>
+                            <td>Must be running locally</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Model</strong></td>
+                            <td>deepseek-coder / llava / qwen2.5-vl</td>
+                            <td>At least one text model required</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Git</strong></td>
+                            <td>2.x+</td>
+                            <td>For cloning the repository</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="callout warning">
+                    <strong>⚠️ Firefox Not Supported</strong>
+                    <p style="margin-bottom:0">
+                        MaskAgent uses Manifest V3 and Chrome-specific APIs.
+                        Firefox support is not currently implemented.
+                    </p>
+                </div>
+            </section>
+
+            <!-- ======================================
+            INSTALLATION
+            ====================================== -->
+            <section id="installation">
+                <h2>Installation</h2>
+
+                <h3>Directory Structure</h3>
+                <pre><code>maskagent/
+├── code_files/              # ← Extension source
+│   ├── manifest.json        # Extension configuration
+│   ├── background.js        # Service worker & AI orchestration
+│   ├── content.js           # Page interaction & privacy
+│   ├── popup.html           # UI
+│   ├── popup.js             # UI controller
+│   └── styles.css           # UI styling
+├── img/                     # Assets
+├── docs/                    # Documentation
+└── README.md</code></pre>
+
+                <h3>Loading the Extension</h3>
+                <ol>
+                    <li>Open Chrome and navigate to <code>chrome://extensions/</code></li>
+                    <li>Toggle <strong>Developer Mode</strong> on (top-right)</li>
+                    <li>Click <strong>Load unpacked</strong></li>
+                    <li>Select the <code>code_files/</code> directory inside the repository</li>
+                    <li>Verify MaskAgent appears in your extensions list</li>
+                </ol>
+
+                <h3>Verifying Ollama Connection</h3>
+                <pre><code># Check if Ollama is running
+curl http://localhost:11434/api/tags
+
+# If not, start it
+ollama serve
+
+# List installed models
+ollama list</code></pre>
+
+                <div class="callout">
+                    <strong>🔍 Pro Tip</strong>
+                    <p style="margin-bottom:0">
+                        After changing any source file, reload the extension at
+                        <code>chrome://extensions/</code> by clicking the refresh icon
+                        on the MaskAgent card.
+                    </p>
+                </div>
+            </section>
+
+            <!-- ======================================
+            ARCHITECTURE
+            ====================================== -->
+            <section id="architecture">
+                <h2>Architecture</h2>
+
+                <p>
+                    MaskAgent is composed of three primary runtime components that communicate
+                    via Chrome's message-passing APIs.
+                </p>
+
+                <div class="diagram">
+┌─────────────────────────────────────────────────────────────┐
+│                      <span class="highlight">Browser Environment</span>                         │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │  <span class="highlight-green">Popup</span> (popup.html/js)                                 │  │
+│  │  • Goal input                                         │  │
+│  │  • Model selection                                    │  │
+│  │  • Status display                                     │  │
+│  │  • Agent control                                      │  │
+│  └───────────────────────┬───────────────────────────────┘  │
+│                          │ <span class="arrow">chrome.runtime.sendMessage</span>                     │
+│  ┌───────────────────────▼───────────────────────────────┐  │
+│  │  <span class="highlight-orange">Background Service Worker</span> (background.js)              │  │
+│  │  • Ollama API communication                           │  │
+│  │  • Model detection                                    │  │
+│  │  • Agent loop orchestration                           │  │
+│  │  • Action validation                                  │  │
+│  │  • Message routing                                    │  │
+│  └───────────────────────┬───────────────────────────────┘  │
+│                          │ <span class="arrow">chrome.tabs.sendMessage</span>                       │
+│  ┌───────────────────────▼───────────────────────────────┐  │
+│  │  <span class="highlight">Content Script</span> (content.js)                               │  │
+│  │  • DOM analysis                                       │  │
+│  │  • PII detection & redaction                          │  │
+│  │  • Screenshot capture (canvas)                        │  │
+│  │  • Canvas redaction                                   │  │
+│  │  • Browser action execution                           │  │
+│  └───────────────────────────────────────────────────────┘  │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+                </div>
+
+                <h3>Trust Boundaries</h3>
+                <p>
+                    Privacy is enforced at multiple boundaries in the system:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr><th>Boundary</th><th>Before</th><th>After</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Content Script</strong></td>
+                            <td>Full DOM, raw text, raw screenshots</td>
+                            <td>Redacted DOM, redacted text, masked screenshot</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Background → AI</strong></td>
+                            <td>Sanitized context</td>
+                            <td>AI inference (no data stored)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>AI → Action</strong></td>
+                            <td>AI-generated action</td>
+                            <td>Validated action before execution</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="callout">
+                    <strong>🔒 Privacy Assurance</strong>
+                    <p style="margin-bottom:0">
+                        No PII ever leaves the content script's privacy boundary.
+                        The AI model never sees raw sensitive data.
+                    </p>
+                </div>
+            </section>
+
+            <!-- ======================================
+            CODEBASE
+            ====================================== -->
+            <section id="codebase">
+                <h2>Codebase Guide</h2>
+
+                <h3><code>manifest.json</code></h3>
+                <p>
+                    Extension configuration defining permissions, entry points, and
+                    content script injection rules.
+                </p>
+                <pre><code>{
+    "manifest_version": 3,
+    "name": "MaskAgent",
+    "permissions": ["activeTab", "storage", "scripting"],
+    "host_permissions": [
+        "http://localhost:11434/*",
+        "https://*/",
+        "http://*/"
+    ],
+    "background": { "service_worker": "background.js" },
+    "action": { "default_popup": "popup.html" },
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["content.js"],
+            "run_at": "document_idle"
+        }
+    ]
+}</code></pre>
+
+                <h3><code>background.js</code></h3>
+                <p>
+                    <strong>Purpose:</strong> Service worker orchestrating the agent loop,
+                    communicating with Ollama, and coordinating between popup and content script.
+                </p>
+
+                <h4>Key Functions</h4>
+                <ul>
+                    <li><code>runAgent(goal, model)</code> — Initializes a new agent session</li>
+                    <li><code>agentLoop()</code> — Main execution loop (get state → AI → execute → repeat)</li>
+                    <li><code>queryOllama(prompt)</code> — Sends prompt to Ollama, parses JSON response</li>
+                    <li><code>validateAction(action)</code> — Validates action schema and parameters</li>
+                    <li><code>executeAction(action)</code> — Sends action to content script</li>
+                </ul>
+
+                <h4>State Management</h4>
+                <pre><code>let session = {
+    id: string,
+    tabId: number,
+    goal: string,
+    model: string,
+    step: number,
+    maxSteps: 10,
+    history: [{ step, action, result }],
+    status: 'idle' | 'running' | 'complete' | 'error'
+};</code></pre>
+
+                <h3><code>content.js</code></h3>
+                <p>
+                    <strong>Purpose:</strong> Runs in page context for DOM analysis,
+                    PII detection/redaction, screenshot capture, and action execution.
+                </p>
+
+                <h4>Key Functions</h4>
+                <ul>
+                    <li><code>getPageState(options)</code> — Collects DOM, text, and optionally screenshot</li>
+                    <li><code>extractDOM()</code> — Builds structured element list with bounding rects</li>
+                    <li><code>detectPII(dom)</code> — Scans for sensitive patterns (email, phone, password, etc.)</li>
+                    <li><code>redactPII(dom)</code> — Replaces sensitive values with <code>***REDACTED***</code></li>
+                    <li><code>captureScreenshot()</code> — Captures canvas, redacts sensitive areas</li>
+                    <li><code>executeAction(action)</code> — Executes CLICK, TYPE, SCROLL, SELECT, DONE</li>
+                </ul>
+
+                <h4>PII Detection Patterns</h4>
+                <pre><code>const patterns = {
+    email: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/,
+    phone: /[\+\d]?[\( ]?\d{3}[\)\- ]?\d{3}[\- ]?\d{4}/,
+    password: /password|passwd|pwd/i,
+    creditCard: /\d{4}[\- ]?\d{4}[\- ]?\d{4}[\- ]?\d{4}/
+};</code></pre>
+
+                <h3><code>popup.html</code> &amp; <code>popup.js</code></h3>
+                <p>
+                    <strong>Purpose:</strong> UI and controller for the extension popup.
+                    Handles goal input, model selection, and displays agent status/logs.
+                </p>
+
+                <div class="callout">
+                    <strong>📁 File Interaction Matrix</strong>
+                    <table style="margin:8px 0 0">
+                        <tr><th>File</th><th>Sends To</th><th>Receives From</th></tr>
+                        <tr><td><code>popup.js</code></td><td><code>background.js</code></td><td><code>background.js</code></td></tr>
+                        <tr><td><code>background.js</code></td><td><code>content.js</code>, Ollama</td><td><code>popup.js</code>, <code>content.js</code></td></tr>
+                        <tr><td><code>content.js</code></td><td><code>background.js</code></td><td><code>background.js</code></td></tr>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ======================================
+            PIPELINE
+            ====================================== -->
+            <section id="pipeline">
+                <h2>Agent Pipeline</h2>
+
+                <div class="diagram">
+<span class="highlight">Step 1: Goal Input</span>
+  User provides goal via popup
+  │
+  ▼
+<span class="highlight">Step 2: Initialize Session</span>
+  Background creates session with goal, model, tabId
+  │
+  ▼
+<span class="highlight">Step 3: Get Page State</span>
+  Background → Content: "getState"
+  Content: extracts DOM, text, screenshot
+  Content: detects & redacts PII
+  Content → Background: sanitized state
+  │
+  ▼
+<span class="highlight">Step 4: Build Prompt</span>
+  Background constructs prompt with:
+  • Goal
+  • Redacted DOM
+  • Redacted text
+  • Available actions
+  • Action history
+  │
+  ▼
+<span class="highlight">Step 5: AI Inference</span>
+  Background → Ollama: POST /api/generate
+  Ollama → Background: AI response (JSON)
+  │
+  ▼
+<span class="highlight">Step 6: Validate Action</span>
+  Background: parse & validate action schema
+  Check: type, target (if required)
+  │
+  ▼
+<span class="highlight">Step 7: Execute Action</span>
+  Background → Content: "executeAction"
+  Content: finds element, performs action
+  Content → Background: execution result
+  │
+  ▼
+<span class="highlight">Step 8: Check Completion</span>
+  If action.type === 'DONE' OR maxSteps reached:
+    → session.status = 'complete'
+    → notify popup
+  Else:
+    → loop back to Step 3
+                </div>
+
+                <h3>Action Schema</h3>
+                <p>
+                    The AI model must respond with a JSON object matching one of these schemas:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr><th>Action</th><th>Schema</th><th>Description</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>CLICK</code></td>
+                            <td><code>{ "type": "CLICK", "target": "#button-id" }</code></td>
+                            <td>Clicks the specified element</td>
+                        </tr>
+                        <tr>
+                            <td><code>TYPE</code></td>
+                            <td><code>{ "type": "TYPE", "target": "#input", "value": "text" }</code></td>
+                            <td>Types text into an input/textarea</td>
+                        </tr>
+                        <tr>
+                            <td><code>SCROLL</code></td>
+                            <td><code>{ "type": "SCROLL", "target": "down" }</code></td>
+                            <td>Scrolls (up/down/top/bottom)</td>
+                        </tr>
+                        <tr>
+                            <td><code>SELECT</code></td>
+                            <td><code>{ "type": "SELECT", "target": "#select", "value": "option" }</code></td>
+                            <td>Selects an option from a dropdown</td>
+                        </tr>
+                        <tr>
+                            <td><code>DONE</code></td>
+                            <td><code>{ "type": "DONE" }</code></td>
+                            <td>Signals task completion</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="callout warning">
+                    <strong>⚠️ Important</strong>
+                    <p style="margin-bottom:0">
+                        All actions are validated before execution. Invalid actions
+                        (missing target, unknown type) are rejected and logged.
+                    </p>
+                </div>
+            </section>
+
+            <!-- ======================================
+            PRIVACY
+            ====================================== -->
+            <section id="privacy">
+                <h2>Privacy Architecture</h2>
+
+                <p>
+                    MaskAgent's privacy model is built on the principle of
+                    <strong>data minimization</strong> — only the minimum necessary
+                    information is sent to the AI model.
+                </p>
+
+                <h3>DOM-Level Redaction</h3>
+                <p>
+                    The content script scans the DOM and marks elements as sensitive
+                    based on:
+                </p>
+                <ul>
+                    <li><strong>Field type:</strong> <code>input[type="password"]</code> → automatically sensitive</li>
+                    <li><strong>Field name:</strong> <code>name="email"</code>, <code>name="phone"</code>, etc.</li>
+                    <li><strong>Pattern matching:</strong> Email addresses, phone numbers, credit card numbers</li>
+                </ul>
+
+                <p>
+                    Sensitive values are replaced with <code>***REDACTED***</code>
+                    before being sent to the background script.
+                </p>
+
+                <h3>Visual Redaction</h3>
+                <p>
+                    When screenshots are captured (for vision models), the canvas
+                    is redacted by drawing black rectangles over sensitive element
+                    bounding boxes.
+                </p>
+
+                <h3>What the AI Sees</h3>
+                <ul>
+                    <li><strong>DOM:</strong> Element tags, IDs, classes, attributes — but values are redacted</li>
+                    <li><strong>Text:</strong> Page text with patterns replaced by <code>[EMAIL]</code>, <code>[PHONE]</code>, etc.</li>
+                    <li><strong>Screenshot:</strong> Page image with sensitive areas masked in black</li>
+                    <li><strong>Never:</strong> Passwords, credit card numbers, private addresses</li>
+                </ul>
+
+                <h3>Limitations</h3>
+                <div class="callout warning">
+                    <strong>⚠️ PII Detection is Not Perfect</strong>
+                    <ul style="margin-bottom:0">
+                        <li><strong>False negatives:</strong> Some sensitive fields may not be detected</li>
+                        <li><strong>False positives:</strong> Non-sensitive fields may be unnecessarily redacted</li>
+                        <li><strong>Dynamic content:</strong> JavaScript-rendered content may be missed</li>
+                        <li><strong>Shadow DOM:</strong> Limited support for shadow DOM elements</li>
+                    </ul>
+                </div>
+
+                <div class="callout">
+                    <strong>🔬 Testing Privacy</strong>
+                    <p style="margin-bottom:0">
+                        Always verify redaction works on your test pages.
+                        See the <a href="#testing">Testing</a> section for guidelines.
+                    </p>
+                </div>
+            </section>
+
+            <!-- ======================================
+            OLLAMA
+            ====================================== -->
+            <section id="ollama">
+                <h2>Ollama Integration</h2>
+
+                <h3>API Endpoint</h3>
+                <p>
+                    MaskAgent communicates with Ollama via the local API endpoint:
+                    <code>http://localhost:11434/api/generate</code>
+                </p>
+
+                <h3>Request Format</h3>
+                <pre><code>POST /api/generate
+{
+    "model": "deepseek-coder",
+    "prompt": "... sanitized context + goal ...",
+    "stream": false
+}</code></pre>
+
+                <h3>Supported Models</h3>
+                <table>
+                    <thead>
+                        <tr><th>Model</th><th>Type</th><th>Use Case</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>deepseek-coder</code></td><td>Text</td><td>General browser automation (recommended)</td></tr>
+                        <tr><td><code>llava</code></td><td>Vision</td><td>Visual understanding of page layouts</td></tr>
+                        <tr><td><code>qwen2.5-vl</code></td><td>Vision</td><td>Alternative vision model</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>Model Selection</h3>
+                <p>
+                    Models are selected via the popup dropdown. The extension
+                    does not automatically detect installed models — the user
+                    must choose one that is installed.
+                </p>
+
+                <h3>Verifying Models</h3>
+                <pre><code># List installed models
+ollama list
+
+# Pull a model
+ollama pull deepseek-coder
+
+# Check model details
+ollama show deepseek-coder</code></pre>
+
+                <div class="callout warning">
+                    <strong>⚠️ CORS & Localhost</strong>
+                    <p style="margin-bottom:0">
+                        The extension has <code>host_permissions</code> for
+                        <code>http://localhost:11434/*</code>, which allows
+                        communication with Ollama without CORS issues.
+                    </p>
+                </div>
+            </section>
+
+            <!-- ======================================
+            MODELS
+            ====================================== -->
+            <section id="models">
+                <h2>Models</h2>
+
+                <p>
+                    MaskAgent currently supports three model types, each with
+                    different strengths and requirements.
+                </p>
+
+                <h3>DeepSeek-Coder (Recommended)</h3>
+                <ul>
+                    <li><strong>Size:</strong> ~4.7GB</li>
+                    <li><strong>Type:</strong> Text-only</li>
+                    <li><strong>Strength:</strong> Excellent at code-like structured outputs</li>
+                    <li><strong>Use:</strong> Most automation tasks, form filling, navigation</li>
+                </ul>
+
+                <h3>LLaVA</h3>
+                <ul>
+                    <li><strong>Size:</strong> ~4.3GB</li>
+                    <li><strong>Type:</strong> Vision + Text</li>
+                    <li><strong>Strength:</strong> Understands visual layout and UI elements</li>
+                    <li><strong>Use:</strong> Finding buttons by appearance, visual QA</li>
+                </ul>
+
+                <h3>Qwen2.5-VL</h3>
+                <ul>
+                    <li><strong>Size:</strong> ~7GB</li>
+                    <li><strong>Type:</strong> Vision + Text</li>
+                    <li><strong>Strength:</strong> Alternative vision model with strong reasoning</li>
+                    <li><strong>Use:</strong> Complex visual understanding tasks</li>
+                </ul>
+
+                <div class="callout">
+                    <strong>📌 Recommendation</strong>
+                    <p style="margin-bottom:0">
+                        Start with <code>deepseek-coder</code> for most tasks.
+                        Switch to a vision model when the agent needs to "see" the page layout.
+                    </p>
+                </div>
+            </section>
+
+            <!-- ======================================
+            ACTIONS
+            ====================================== -->
+            <section id="actions">
+                <h2>Action Contract</h2>
+
+                <p>
+                    The AI model must output actions in a specific JSON format.
+                    MaskAgent validates these actions before execution.
+                </p>
+
+                <h3>CLICK</h3>
+                <pre><code>{
+    "type": "CLICK",
+    "target": "#submit-button"
+}</code></pre>
+                <p>
+                    Clicks the element matching the target selector.
+                    Target can be ID (<code>#id</code>), class (<code>.class</code>),
+                    or any valid CSS selector.
+                </p>
+
+                <h3>TYPE</h3>
+                <pre><code>{
+    "type": "TYPE",
+    "target": "#email-input",
+    "value": "test@example.com"
+}</code></pre>
+                <p>
+                    Types the given value into the target input/textarea.
+                    Triggers <code>input</code> and <code>change</code> events.
+                </p>
+
+                <h3>SCROLL</h3>
+                <pre><code>{
+    "type": "SCROLL",
+    "target": "down"
+}</code></pre>
+                <p>
+                    Scrolls the page. Valid targets: <code>"up"</code>, <code>"down"</code>,
+                    <code>"top"</code>, <code>"bottom"</code>.
+                </p>
+
+                <h3>SELECT</h3>
+                <pre><code>{
+    "type": "SELECT",
+    "target": "#country",
+    "value": "US"
+}</code></pre>
+                <p>
+                    Selects an option in a <code>&lt;select&gt;</code> dropdown.
+                    Triggers a <code>change</code> event.
+                </p>
+
+                <h3>DONE</h3>
+                <pre><code>{
+    "type": "DONE"
+}</code></pre>
+                <p>
+                    Signals that the task is complete. The agent loop will stop.
+                </p>
+
+                <div class="callout">
+                    <strong>📝 Prompt Engineering</strong>
+                    <p style="margin-bottom:0">
+                        To teach the model about these actions, include the action
+                        schema in the system prompt or examples.
+                    </p>
+                </div>
+            </section>
+
+            <!-- ======================================
+            TESTING
+            ====================================== -->
+            <section id="testing">
+                <h2>Testing</h2>
+
+                <h3>Local Test Page</h3>
+                <p>
+                    Create a test HTML page with various form elements:
+                </p>
+                <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;body&gt;
+    &lt;h2&gt;Test Form&lt;/h2&gt;
+    &lt;form&gt;
+        &lt;label&gt;Name: &lt;input type="text" name="name" value="John Doe"&gt;&lt;/label&gt;&lt;br&gt;
+        &lt;label&gt;Email: &lt;input type="email" name="email" value="john@example.com"&gt;&lt;/label&gt;&lt;br&gt;
+        &lt;label&gt;Phone: &lt;input type="tel" name="phone" value="123-456-7890"&gt;&lt;/label&gt;&lt;br&gt;
+        &lt;label&gt;Password: &lt;input type="password" name="password" value="secret123"&gt;&lt;/label&gt;&lt;br&gt;
+        &lt;button type="submit"&gt;Submit&lt;/button&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+                <h3>Privacy Tests</h3>
+                <ul>
+                    <li>Verify email addresses are redacted → <code>[EMAIL]</code></li>
+                    <li>Verify phone numbers are redacted → <code>[PHONE]</code></li>
+                    <li>Verify password fields are marked sensitive</li>
+                    <li>Verify screenshot redaction masks sensitive areas</li>
+                </ul>
+
+                <h3>Agent Tests</h3>
+                <ul>
+                    <li>Test <code>CLICK</code> on buttons and links</li>
+                    <li>Test <code>TYPE</code> into input fields</li>
+                    <li>Test <code>SCROLL</code> navigation</li>
+                    <li>Test <code>SELECT</code> dropdown options</li>
+                    <li>Test <code>DONE</code> completion detection</li>
+                </ul>
+
+                <h3>Negative Tests</h3>
+                <ul>
+                    <li>Missing element → agent should handle gracefully</li>
+                    <li>Invalid action → validation should reject</li>
+                    <li>Ollama unavailable → error handling</li>
+                    <li>Malformed model output → parse errors</li>
+                </ul>
+
+                <div class="callout danger">
+                    <strong>🔴 NEVER Use Real Data in Tests</strong>
+                    <p style="margin-bottom:0">
+                        Always use synthetic test data. Never submit real personal
+                        information, credentials, or sensitive content.
+                    </p>
+                </div>
+            </section>
+
+            <!-- ======================================
+            DEBUGGING
+            ====================================== -->
+            <section id="debugging">
+                <h2>Debugging</h2>
+
+                <h3>Extension Debugging</h3>
+
+                <p><strong>Popup Console:</strong></p>
+                <ol>
+                    <li>Right-click the extension icon → <strong>Inspect Popup</strong></li>
+                    <li>View logs in the Console tab</li>
+                </ol>
+
+                <p><strong>Service Worker Console:</strong></p>
+                <ol>
+                    <li>Go to <code>chrome://extensions/</code></li>
+                    <li>Find MaskAgent and click <strong>service worker</strong> (or <strong>background page</strong>)</li>
+                    <li>View logs in the Console tab</li>
+                </ol>
+
+                <p><strong>Content Script Console:</strong></p>
+                <ol>
+                    <li>Open the page's developer tools (<kbd>F12</kbd> or <kbd>Cmd+Opt+I</kbd>)</li>
+                    <li>Look for logs from <code>content.js</code></li>
+                </ol>
+
+                <h3>Ollama Debugging</h3>
+                <pre><code># Check Ollama status
+ollama list
+
+# View Ollama logs
+ollama serve
+
+# Test Ollama API directly
+curl -X POST http://localhost:11434/api/generate \
+  -H "Content-Type: application/json" \
+  -d '{"model": "deepseek-coder", "prompt": "Hello", "stream": false}'</code></pre>
+
+                <h3>Common Issues</h3>
+
+                <table>
+                    <thead>
+                        <tr><th>Issue</th><th>Likely Cause</th><th>Solution</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Extension not loading</td>
+                            <td>Wrong directory selected</td>
+                            <td>Select <code>code_files/</code> directory</td>
+                        </tr>
+                        <tr>
+                            <td>Ollama connection error</td>
+                            <td>Ollama not running</td>
+                            <td>Run <code>ollama serve</code></td>
+                        </tr>
+                        <tr>
+                            <td>Model not found</td>
+                            <td>Model not installed</td>
+                            <td>Run <code>ollama pull deepseek-coder</code></td>
+                        </tr>
+                        <tr>
+                            <td>Invalid JSON from model</td>
+                            <td>Model output not JSON</td>
+                            <td>Check prompt, adjust examples</td>
+                        </tr>
+                        <tr>
+                            <td>Action target not found</td>
+                            <td>Element not in page</td>
+                            <td>Wait for page to load, check selector</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- ======================================
+            EXTENDING
+            ====================================== -->
+            <section id="extending">
+                <h2>Extending MaskAgent</h2>
+
+                <h3>Adding a New PII Detector</h3>
+                <ol>
+                    <li>Open <code>content.js</code></li>
+                    <li>Locate the <code>detectPII()</code> function</li>
+                    <li>Add your pattern to the <code>patterns</code> object</li>
+                    <li>Update the <code>redactPII()</code> function if needed</li>
+                </ol>
+                <pre><code>// In content.js - detectPII()
+const patterns = {
+    email: /.../,
+    phone: /.../,
+    // Add your new pattern here
+    customId: /CUST-\d{4}-\d{4}/
+};</code></pre>
+
+                <h3>Adding a New Browser Action</h3>
+                <ol>
+                    <li><strong>Define the action schema</strong> in the prompt (background.js)</li>
+                    <li><strong>Update validation</strong> in <code>validateAction()</code> (background.js)</li>
+                    <li><strong>Implement execution</strong> in <code>executeAction()</code> (content.js)</li>
+                    <li><strong>Add tests</strong> (see <a href="#testing">Testing</a>)</li>
+                    <li><strong>Update documentation</strong></li>
+                </ol>
+                <pre><code>// In content.js - executeAction()
+case 'NEW_ACTION':
+    // Implement your logic
+    // Return { success: true, action: 'new_action' }
+    break;</code></pre>
+
+                <h3>Adding a New AI Model</h3>
+                <ol>
+                    <li>Add the model to the <code>&lt;select&gt;</code> in <code>popup.html</code></li>
+                    <li>The model must support the same API contract (JSON response)</li>
+                    <li>Test with the new model</li>
+                </ol>
+
+                <div class="callout">
+                    <strong>🧪 Best Practice</strong>
+                    <p style="margin-bottom:0">
+                        When adding new functionality, test with synthetic data first.
+                        Use the <a href="#testing">Testing</a> guide for examples.
+                    </p>
+                </div>
+            </section>
+
+            <!-- ======================================
+            CONTRIBUTING
+            ====================================== -->
+            <section id="contributing">
+                <h2>Contributing</h2>
+
+                <h3>Development Workflow</h3>
+                <ol>
+                    <li><strong>Fork</strong> the repository on GitHub</li>
+                    <li><strong>Clone</strong> your fork locally</li>
+                    <li><strong>Create a branch</strong> for your change</li>
+                    <li><strong>Make changes</strong> following the code style</li>
+                    <li><strong>Test</strong> locally (see <a href="#testing">Testing</a>)</li>
+                    <li><strong>Verify privacy</strong> — no sensitive data in logs</li>
+                    <li><strong>Update documentation</strong> if needed</li>
+                    <li><strong>Commit</strong> with clear messages</li>
+                    <li><strong>Push</strong> to your fork</li>
+                    <li><strong>Open a Pull Request</strong></li>
+                </ol>
+
+                <h3>Pull Request Requirements</h3>
+                <ul>
+                    <li>Explain <strong>what</strong> changed and <strong>why</strong></li>
+                    <li>Describe <strong>how</strong> you tested it</li>
+                    <li>Confirm <strong>no privacy regression</strong> occurred</li>
+                    <li>Update documentation if you changed behavior</li>
+                </ul>
+
+                <h3>Areas for Contribution</h3>
+                <ul>
+                    <li><strong>Privacy:</strong> Better PII detection, visual redaction, OCR</li>
+                    <li><strong>Agent Intelligence:</strong> Planning, better validation, task completion</li>
+                    <li><strong>Security:</strong> Prompt injection, action permissions, auditing</li>
+                    <li><strong>Performance:</strong> Faster inference, DOM extraction, context compression</li>
+                    <li><strong>Browser Compatibility:</strong> More browsers, better support</li>
+                </ul>
+
+                <div class="callout danger">
+                    <strong>🔴 Never Submit Real Data</strong>
+                    <p style="margin-bottom:0">
+                        Do not include real credentials, personal data, or sensitive
+                        information in test cases, screenshots, logs, or pull requests.
+                    </p>
+                </div>
+            </section>
+
+            <!-- ======================================
+            SECURITY MODEL
+            ====================================== -->
+            <section id="security-model">
+                <h2>Security Model</h2>
+
+                <h3>Local Inference</h3>
+                <p>
+                    All AI processing runs locally via Ollama. No data leaves your machine.
+                    The extension only communicates with <code>localhost:11434</code>.
+                </p>
+
+                <h3>Permission Model</h3>
+                <ul>
+                    <li><code>activeTab</code> — Only active tab access</li>
+                    <li><code>storage</code> — Local settings only</li>
+                    <li><code>scripting</code> — Required for content script injection</li>
+                    <li><code>host_permissions</code> — For Ollama and web pages</li>
+                </ul>
+
+                <h3>Action Validation</h3>
+                <ul>
+                    <li>All AI-generated actions are validated before execution</li>
+                    <li>Invalid actions are rejected with errors</li>
+                    <li>Actions are limited to safe operations (no destructive commands)</li>
+                </ul>
+
+                <h3>Known Risks</h3>
+                <div class="callout warning">
+                    <strong>⚠️ Important Security Considerations</strong>
+                    <ul style="margin-bottom:0">
+                        <li><strong>Prompt Injection:</strong> User goals could influence model behavior</li>
+                        <li><strong>Model Hallucinations:</strong> AI may generate unexpected actions</li>
+                        <li><strong>Unintended Actions:</strong> The model might target wrong elements</li>
+                        <li><strong>Dynamic Content:</strong> Page changes after state capture</li>
+                    </ul>
+                </div>
+
+                <div class="callout">
+                    <strong>📧 Vulnerability Reporting</strong>
+                    <p style="margin-bottom:0">
+                        If you discover a security vulnerability, please open a
+                        GitHub issue (private if sensitive) or contact the
+                        maintainers directly.
+                    </p>
+                </div>
+            </section>
+
+            <!-- ======================================
+            LIMITATIONS
+            ====================================== -->
+            <section id="limitations">
+                <h2>Limitations</h2>
+
+                <table>
+                    <thead>
+                        <tr><th>Area</th><th>Limitation</th><th>Status</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Browser</strong></td>
+                            <td>Chrome/Chromium only</td>
+                            <td>Firefox not supported</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Single Tab</strong></td>
+                            <td>Operates on one tab at a time</td>
+                            <td>Architecture constraint</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cross-Origin</strong></td>
+                            <td>Cannot interact with iframes</td>
+                            <td>Browser security boundary</td>
+                        </tr>
+                        <tr>
+                            <td><strong>PII Detection</strong></td>
+                            <td>Not perfect (false positives/negatives)</td>
+                            <td>Improvement needed</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Shadow DOM</strong></td>
+                            <td>Limited support</td>
+                            <td>Improvement needed</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Dynamic Content</strong></td>
+                            <td>May miss changes after initial capture</td>
+                            <td>Improvement needed</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Model Dependence</strong></td>
+                            <td>Quality depends on LLM capabilities</td>
+                            <td>Model-specific</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Max Steps</strong></td>
+                            <td>10-step limit (configurable in code)</td>
+                            <td>Hard-coded</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="callout">
+                    <strong>🔍 TODO</strong>
+                    <p style="margin-bottom:0">
+                        These limitations are known and being addressed.
+                        Contributions are welcome in all these areas.
+                    </p>
+                </div>
+            </section>
+
+            <!-- ======================================
+            FOOTER (inside content)
+            ====================================== -->
+            <div style="margin-top:48px; padding-top:24px; border-top:1px solid var(--border); color:var(--text-muted); font-size:0.85rem;">
+                <p>
+                    <strong>MaskAgent</strong> · Smart India Hackathon 2026 (SIH26171) ·
+                    <a href="https://github.com/bhuvanesh-m-dev/maskagent">GitHub</a> ·
+                    <a href="#overview">Back to top ↑</a>
+                </p>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ==========================================
+    FOOTER
+    ========================================== -->
+    <footer class="footer">
+        <div class="container">
+            <span>
+                <strong>MaskAgent</strong> · MIT License · SIH26171
+            </span>
+            <span>
+                <a href="https://github.com/bhuvanesh-m-dev/maskagent">GitHub</a> ·
+                <a href="#overview">Documentation</a>
+            </span>
+        </div>
+    </footer>
+
+    <!-- ==========================================
+    JAVASCRIPT — Active nav highlighting on scroll
+    ========================================== -->
+    <script>
+        (function() {
+            const sections = document.querySelectorAll('.content section[id]');
+            const navLinks = document.querySelectorAll('.sidebar-nav a');
+
+            function updateActiveLink() {
+                let current = '';
+                const scrollPos = window.scrollY + 120;
+
+                sections.forEach(section => {
+                    const top = section.offsetTop;
+                    const height = section.offsetHeight;
+                    if (scrollPos >= top && scrollPos < top + height) {
+                        current = section.id;
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${current}`) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+
+            window.addEventListener('scroll', updateActiveLink);
+            window.addEventListener('load', updateActiveLink);
+        })();
+    </script>
+
+</body>
+</html>
