@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MaskAgent · SIH2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+  <style>
+    /* pure black & white — no borders, no padding, no emojis */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #000000;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      padding: 0;
+      margin: 0;
+    }
+
+    .notice-card {
+      max-width: 880px;
+      width: 100%;
+      background: #000000;
+      padding: 0;
+      box-shadow: none;
+      border: none;
+      border-radius: 0;
+    }
+
+    /* banner — no border, no rounding, full image */
+    .banner-wrapper {
+      width: 100%;
+      background: #000000;
+      border: none;
+      border-radius: 0;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+      box-shadow: none;
+    }
+
+    .banner-wrapper img {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      background: #000;
+      border: none;
+      border-radius: 0;
+    }
+
+    /* content — no padding, no borders */
+    .notice-content {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      padding: 0;
+    }
+
+    /* big centered UNDER MAINTENANCE — no emoji */
+    .maintenance-title {
+      font-size: 2.8rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #ffffff;
+      text-align: center;
+      padding: 0.2rem 0 0.1rem 0;
+      line-height: 1.1;
+      background: #000000;
+    }
+
+    /* subtle divider line — pure b&w */
+    .divider-line {
+      width: 100%;
+      height: 1px;
+      background: #2a2a2a;
+      margin: 0.1rem 0 0.2rem 0;
+      border: none;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #f0f0f0;
+      line-height: 1.2;
+      padding: 0;
+      margin: 0;
+      text-align: center;
+    }
+
+    .highlight {
+      color: #ffffff;
+      font-weight: 700;
+      border-bottom: none;
+      padding: 0;
+    }
+
+    .sub-message {
+      font-size: 1rem;
+      color: #bfbfbf;
+      line-height: 1.5;
+      background: #0a0a0a;
+      padding: 0.5rem 0.8rem;
+      border-radius: 0;
+      border: none;
+      margin: 0;
+      text-align: center;
+    }
+
+    .sub-message strong {
+      color: #f0f0f0;
+      font-weight: 600;
+    }
+
+    /* edit notice — no emojis, no team text */
+    .edit-notice {
+      background: #0a0a0a;
+      border: none;
+      border-radius: 0;
+      padding: 0.5rem 0.8rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem 1.5rem;
+      margin: 0;
+    }
+
+    .edit-notice p {
+      font-size: 0.95rem;
+      color: #cccccc;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin: 0;
+      padding: 0;
+    }
+
+    .edit-notice p .edit-icon {
+      font-size: 1rem;
+      opacity: 0.5;
+      color: #888;
+      font-weight: 300;
+    }
+
+    .pill-btn {
+      background: #111;
+      border: none;
+      padding: 0.2rem 1rem;
+      border-radius: 0;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #e0e0e0;
+      letter-spacing: 0.02em;
+      cursor: default;
+      white-space: nowrap;
+    }
+
+    .pill-btn .clock-icon {
+      font-style: normal;
+      margin-right: 0.2rem;
+      color: #888;
+      font-weight: 300;
+    }
+
+    .footer-note {
+      display: flex;
+      justify-content: center;
+      font-size: 0.7rem;
+      color: #777;
+      margin: 0.3rem 0 0 0;
+      border: none;
+      padding: 0;
+    }
+
+    .footer-note span {
+      background: #0a0a0a;
+      padding: 0.1rem 0.6rem;
+      border-radius: 0;
+      border: none;
+      color: #999;
+      letter-spacing: 0.04em;
+    }
+
+    /* responsive */
+    @media (max-width: 600px) {
+      .notice-card { padding: 0; }
+      .maintenance-title { font-size: 2rem; letter-spacing: 0.06em; }
+      h1 { font-size: 1.5rem; }
+      .sub-message { font-size: 0.9rem; padding: 0.4rem 0.6rem; }
+      .edit-notice { flex-direction: column; align-items: center; }
+      .banner-wrapper img { aspect-ratio: 1200 / 420; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="notice-card">
+  
+  <!-- BANNER: exact URL, fully shown -->
+  <div class="banner-wrapper">
+    <img 
+      src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/immortal6.png" 
+      alt="MaskAgent banner" 
+      loading="lazy"
+    />
+  </div>
+
+  <!-- notice content — pure black & white, no emojis, no team text -->
+  <div class="notice-content">
+    
+    <!-- BIG CENTERED UNDER MAINTENANCE — no emoji -->
+    <div class="maintenance-title">under maintenance</div>
+    
+    <div class="divider-line"></div>
+
+    <h1>
+      SIH2026 · <span class="highlight">MaskAgent</span>
+    </h1>
+
+    <div class="sub-message">
+      <strong>You landed on the correct link.</strong> 
+      The <strong>MaskAgent</strong> PPT is currently being edited. 
+      We are refining the final version — please check back shortly.
+    </div>
+
+    <!-- edit notice: no emojis, no Team DataSync -->
+    <div class="edit-notice">
+      <p>
+        <span class="edit-icon">✎</span> 
+        <strong>PPT edit in progress</strong> · come after sometime
+      </p>
+      <span class="pill-btn">
+        <span class="clock-icon">⌛</span> SIH2026
+      </span>
+    </div>
+
+    <div class="footer-note">
+      <span>MaskAgent · immortal6</span>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
