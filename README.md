@@ -82,9 +82,7 @@ No webpage context needs to be sent to a hosted AI API when the local setup is u
 
 The agent can reason about and execute structured actions such as:
 
-```text
-CLICK   TYPE   SCROLL   SELECT   DONE
-```
+<img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/readme/5.jpg" alt="Smart India Hackathon 2026" height="600">
 
 Actions should be checked against the page and user intent before execution.
 
