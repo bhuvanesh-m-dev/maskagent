@@ -92,40 +92,11 @@ Actions should be checked against the page and user intent before execution.
 
 The extension exposes the agent's progress so the user can understand what happened:
 
-```text
-[task] Starting MaskAgent task
-[privacy] Redaction: ON
-[scan] Inspecting DOM and visible UI
-[mask] Sensitive elements sanitized
-[model] Consulting local Ollama model
-[action] Decision: CLICK
-[done] Action validated and completed
-```
+<img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/readme/3.jpg" alt="Smart India Hackathon 2026" height="600">
 
 ## Project architecture
 
-```text
-+------------------------------------------------+
-| Browser                                        |
-|                                                |
-|  +------------------------------------------+  |
-|  | MaskAgent extension                      |  |
-|  |                                          |  |
-|  | Popup UI -> Background service           |  |
-|  |                 |                        |  |
-|  |                 v                        |  |
-|  |          Content script                  |  |
-|  |                 |                        |  |
-|  |                 v                        |  |
-|  |       DOM/UI analysis + PII masking      |  |
-|  +-----------------+------------------------+  |
-|                    |                           |
-+--------------------|---------------------------+
-                     | Local API
-                     v
-             Ollama / local model
-             DeepSeek-Coder or another model
-```
+<img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/readme/4.jpg" alt="Smart India Hackathon 2026" height="600">
 
 ## Repository structure
 
