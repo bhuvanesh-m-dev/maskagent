@@ -101,16 +101,7 @@ MaskAgent/
 └── README.md           Project documentation
 ```
 
-## Technology stack
-
-| Area | Technology |
-| :--- | :--- |
-| Extension | HTML5, CSS3, JavaScript, Chrome Extension APIs |
-| Extension standard | Manifest V3 |
-| Local AI | Ollama and DeepSeek-Coder |
-| Privacy layer | DOM-based PII detection, masking, redaction |
-| Browser support | Chrome, Brave, Edge, and Chromium-compatible browsers |
-| Development environments | Linux, Windows, and macOS |
+<img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/readme/7.jpg" alt="Smart India Hackathon 2026" height="600">
 
 ## Quick start
 
