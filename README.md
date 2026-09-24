@@ -18,22 +18,8 @@
 </div>
 
 ---
+<img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/readme/6.jpg" alt="Smart India Hackathon 2026" height="600">
 
-## Overview
-
-MaskAgent is a privacy-focused Manifest V3 browser extension that helps lightweight browser agents understand and interact with web pages without exposing raw personal information to an AI model.
-
-It combines:
-
-- DOM and visible UI understanding
-- On-device PII detection and redaction
-- Local AI inference through Ollama
-- Validated browser actions
-- A human-readable activity stream
-
-The core principle is simple:
-
-> **Private information should be protected before AI processing, not after it.**
 
 ## Why MaskAgent?
 
