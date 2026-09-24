@@ -41,11 +41,7 @@ Browser agents can find buttons, read page structure, fill forms, navigate websi
 
 A traditional flow may send the complete page context to a remote AI service:
 
-```text
-Web page -> Cloud AI
-             |
-             +-- Personal data may be exposed
-```
+<img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/readme-1.jpg" alt="Smart India Hackathon 2026" height="600">
 
 MaskAgent creates a privacy boundary before reasoning:
 
