@@ -41,31 +41,11 @@ Browser agents can find buttons, read page structure, fill forms, navigate websi
 
 A traditional flow may send the complete page context to a remote AI service:
 
-<img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/readme-1.jpg" alt="Smart India Hackathon 2026" height="600">
+<img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/readme/1.jpg" alt="Smart India Hackathon 2026" height="600">
 
 MaskAgent creates a privacy boundary before reasoning:
 
-```text
-Web page
-   |
-   v
-DOM + visual UI scan
-   |
-   v
-Sensitive data detection
-   |
-   v
-Redaction and masking
-   |
-   v
-Sanitized page context
-   |
-   v
-Local AI through Ollama
-   |
-   v
-Validated browser action
-```
+<img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/readme/2.jpg" alt="Smart India Hackathon 2026" height="600">
 
 The model can understand the page structure and decide what to do without receiving the original sensitive values.
 
