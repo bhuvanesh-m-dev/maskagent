@@ -17,13 +17,44 @@
 
 </div>
 
+<br>
+
+### What is MaskAgent?
+
+**MaskAgent is a privacy-first browser agent for privacy-preserving AI browser automation. It combines DOM and visual webpage perception with local sensitive-data detection and masking before AI reasoning. The system is designed to keep raw sensitive webpage information within the local privacy boundary while providing sanitized context to a local AI model for browser actions such as Click, Type, Scroll, and Select.**
+
+**Core principle: Perceive Locally → Protect Locally → Reason Intelligently.**
+
+## MaskAgent at a glance
+
+| Attribute | Details |
+|---|---|
+| Project | MaskAgent |
+| Category | Privacy-first AI browser agent |
+| Primary purpose | Privacy-preserving browser automation |
+| Browser platform | Chromium-based browsers |
+| Extension standard | Manifest V3 |
+| Perception | DOM + visual webpage understanding |
+| Privacy layer | Local sensitive-data detection and masking |
+| AI runtime | Ollama |
+| Default development model | `deepseek-coder` |
+| Browser actions | Click, Type, Scroll, Select |
+| AI architecture | Local / on-device AI reasoning |
+| Event | Smart India Hackathon 2026 |
+| Problem Statement | SIH26171 |
+| Problem | On-device Visual Perception for Light-weight Browser Agents |
+
+
 ---
 <img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/readme/6.jpg" alt="Smart India Hackathon 2026" height="600">
 
 
 ## Why MaskAgent?
 
-Browser agents can find buttons, read page structure, fill forms, navigate websites, and perform repetitive tasks. However, a page may also contain names, email addresses, phone numbers, addresses, passwords, and other sensitive information.
+Modern **AI browser agents** can inspect webpages, understand page structure, fill forms, navigate websites, and perform repetitive browser automation tasks. However, webpages may also contain **personally identifiable information (PII)** such as names, email addresses, phone numbers, addresses, passwords, dates of birth, and other sensitive information.
+
+MaskAgent addresses this **AI browser-agent privacy problem** by introducing a local privacy boundary before AI reasoning.
+
 
 A traditional flow may send the complete page context to a remote AI service:
 
@@ -35,7 +66,37 @@ MaskAgent creates a privacy boundary before reasoning:
 
 The model can understand the page structure and decide what to do without receiving the original sensitive values.
 
+### How does MaskAgent work?
+
+MaskAgent follows a privacy-first browser-agent pipeline:
+
+1. **Webpage perception** — The browser extension observes the webpage and its structure.
+2. **DOM and visual analysis** — MaskAgent analyzes webpage structure and visible interface elements.
+3. **Sensitive-data detection** — Potential PII and other sensitive values are identified.
+4. **Local masking** — Detected sensitive information is masked before AI reasoning.
+5. **Sanitized context** — Protected webpage context is prepared for the reasoning layer.
+6. **Local AI reasoning** — Ollama runs the configured local AI model.
+7. **Browser action** — The agent performs validated actions such as Click, Type, Scroll, or Select.
+
+The intended privacy boundary is:
+
+**Raw webpage data → Local protection → Sanitized context → AI reasoning → Browser action**
+
 ## Key capabilities
+
+MaskAgent combines **privacy-preserving webpage processing, DOM and visual understanding, local AI inference, and browser automation** into a privacy-first AI browser-agent architecture.
+
+### Key terminology
+
+**AI browser agent** — An AI-powered system that can understand and interact with webpages to perform tasks.
+
+**PII** — Personally Identifiable Information, such as names, email addresses, phone numbers, addresses, passwords, and dates of birth.
+
+**DOM** — Document Object Model, the structured representation of a webpage used by browser scripts.
+
+**Privacy boundary** — The boundary between local sensitive-data processing and AI reasoning.
+
+**Sanitized context** — Webpage context in which detected sensitive information has been masked, redacted, or replaced before AI reasoning.
 
 ### Privacy-preserving processing
 
@@ -60,9 +121,9 @@ The extension combines page structure with visible interface context to identify
 
 ### Local AI inference
 
-MaskAgent can communicate with an Ollama server running on the user's device. The default development model is `deepseek-coder`; compatible local models can be configured for different workloads.
+MaskAgent can communicate with an **Ollama** server running on the user's device. The default development model is `deepseek-coder`; compatible local models can be configured for different workloads.
 
-No webpage context needs to be sent to a hosted AI API when the local setup is used.
+The local configuration is designed to use a local AI runtime rather than requiring a hosted AI API for model inference. MaskAgent also applies its privacy-processing layer before AI reasoning.
 
 ### Browser agent actions
 
@@ -82,15 +143,23 @@ The extension exposes the agent's progress so the user can understand what happe
 
 <img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/readme/4.jpg" alt="Smart India Hackathon 2026" height="600">
 
+### Architecture summary
+
+The MaskAgent browser extension contains the browser-facing components, including the popup interface, background service, content script, and DOM/UI analysis.
+
+Sensitive-data detection and masking occur before the sanitized context is provided to the local AI reasoning layer. The local AI layer communicates with Ollama through a local API.
+
+**Browser → MaskAgent Extension → DOM/UI Analysis → Sensitive-data Detection & Masking → Local Ollama AI → Validated Browser Action**
+
 ## Repository structure
 
 ```text
 MaskAgent/
-├── manifest.json       Manifest V3 extension configuration
-├── background.js       Service worker and Ollama communication
-├── content.js          DOM interaction and privacy processing
-├── popup.html          Extension popup interface
-├── popup.js            Popup controls and agent execution
+├── manifest.json       Manifest V3 extension configuration and permissions
+├── background.js       Service worker, task orchestration, and Ollama communication
+├── content.js          Webpage DOM analysis, sensitive-data detection, masking, and browser interaction
+├── popup.html          MaskAgent extension interface
+├── popup.js            Popup controls and browser-agent task execution
 ├── styles.css          Extension interface styles
 ├── icon16.png          Toolbar icon
 ├── icon48.png          Extension icon
@@ -102,6 +171,29 @@ MaskAgent/
 ```
 
 <img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/readme/7.jpg" alt="Smart India Hackathon 2026" height="600">
+
+## Technologies and concepts
+
+MaskAgent is built around the following technologies and concepts:
+
+- AI browser agents
+- Browser automation
+- Privacy-preserving AI
+- Local AI inference
+- DOM analysis
+- Visual webpage perception
+- Personally Identifiable Information (PII) detection
+- Sensitive-data masking
+- Chromium browser extensions
+- Manifest V3
+- JavaScript
+- HTML
+- CSS
+- Ollama
+- DeepSeek-Coder
+- WebGPU
+- WebAssembly
+- Local / edge AI
 
 ## Quick start
 
@@ -229,6 +321,44 @@ Password: [REDACTED]
 
 The goal is to preserve useful meaning such as `Email field -> sensitive` and `Submit button -> normal UI element` while removing the original values.
 
+## Frequently asked questions
+
+### What is MaskAgent?
+
+MaskAgent is a privacy-first browser agent designed for privacy-preserving AI browser automation.
+
+### What problem does MaskAgent solve?
+
+MaskAgent addresses the risk of exposing sensitive webpage information to AI browser agents during automated browser tasks.
+
+### Does MaskAgent detect PII?
+
+MaskAgent is designed to identify sensitive information such as names, email addresses, phone numbers, addresses, password fields, and dates of birth.
+
+### Does MaskAgent use local AI?
+
+Yes. The current development configuration uses Ollama for local AI inference.
+
+### What AI model does MaskAgent use?
+
+The default development configuration uses `deepseek-coder` through Ollama.
+
+### What browser actions does MaskAgent support?
+
+The current browser-agent workflow includes Click, Type, Scroll, and Select actions.
+
+### Does MaskAgent send webpage data to the cloud?
+
+The local configuration is designed to use Ollama running on the user's device rather than a hosted AI API. MaskAgent also applies its privacy-processing layer before AI reasoning.
+
+### Is MaskAgent production-ready?
+
+No. MaskAgent is currently a research and development prototype. Detection accuracy, dynamic webpage handling, browser-agent reliability, performance, and security remain active development areas.
+
+### What is the SIH problem statement?
+
+MaskAgent was developed for Smart India Hackathon 2026 Problem Statement **SIH26171**, "On-device Visual Perception for Light-weight Browser Agents."
+
 ## Development status
 
 ### Working areas
@@ -285,6 +415,17 @@ Read the full team story at the [MaskAgent Team page](https://bhuvanesh-m-dev.gi
 - [Team page](https://bhuvanesh-m-dev.github.io/maskagent/team.html)
 - [MaskAgent source repository](https://github.com/bhuvanesh-m-dev/maskagent)
 
+## Project summary
+
+**MaskAgent is a privacy-first AI browser agent focused on privacy-preserving browser automation.** It combines DOM analysis, visible webpage understanding, sensitive-data/PII detection, local masking, sanitized AI context, local Ollama inference, and validated browser actions.
+
+The project addresses the problem of sensitive webpage information being unnecessarily exposed during AI-assisted browser automation. Its core architecture is **Perceive Locally → Protect Locally → Reason Intelligently**.
+
+MaskAgent is a **research and development prototype** for Smart India Hackathon 2026 Problem Statement **SIH26171: On-device Visual Perception for Light-weight Browser Agents**. Current development areas include visual PII detection, OCR-based perception, structured model responses, action validation, prompt-injection protection, task completion detection, performance optimization, and cross-browser testing.
+
+### Canonical project terms
+
+`MaskAgent` · `privacy-first browser agent` · `AI browser agent` · `privacy-preserving AI` · `browser automation` · `PII detection` · `sensitive-data masking` · `on-device AI` · `local AI` · `DOM analysis` · `visual webpage perception` · `Ollama` · `DeepSeek-Coder` · `Manifest V3` · `WebGPU` · `WebAssembly` · `Smart India Hackathon 2026` · `SIH26171`
 
 <div align="center">
 
