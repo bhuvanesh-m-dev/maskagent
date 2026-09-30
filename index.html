@@ -28,6 +28,42 @@
         nav .nav-button:hover { color:var(--white); background:var(--coral); border-color:var(--coral); box-shadow:3px 3px 0 var(--ink); }
         .partners { display:flex; align-items:center; gap:20px; }
         .partners img { max-width:92px; max-height:52px; object-fit:contain; }
+
+        /* ===== FIXED LEFT PANEL – 2.5× size, no green circle ===== */
+        .fixed-left {
+            position: fixed;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 22px;
+            width: 375px;
+            pointer-events: none;
+        }
+        .fixed-left a {
+            display: block;
+            pointer-events: auto;
+            transition: transform .2s, filter .2s;
+        }
+        .fixed-left a:hover {
+            transform: translateY(-5px);
+            filter: brightness(1.05);
+        }
+        .fixed-left .hero-main {
+            width: 350px;
+            filter: drop-shadow(12px 14px 0 rgba(16,33,43,.13));
+            animation: float 6s ease-in-out infinite;
+            display: block;
+        }
+        .fixed-left .try-btn img {
+            width: 350px;
+            height: auto;
+            display: block;
+        }
+
         .hero { display:grid; grid-template-columns:1.04fr .96fr; gap:56px; min-height:650px; align-items:center; padding:72px 0 86px; }
         h1,h2,h3,p { margin-top:0; }
         h1 { max-width:690px; margin:18px 0 24px; font-size:clamp(3.4rem,8vw,7.6rem); line-height:.91; letter-spacing:-.075em; font-weight:700; }
@@ -91,6 +127,11 @@
         footer strong { color:var(--ink); }
         .reveal { opacity:0; transform:translateY(24px); transition:opacity .7s ease,transform .7s ease; }
         .reveal.visible { opacity:1; transform:none; }
+
+        @media (min-width: 1200px) {
+            .wrap { padding-left: 80px; }
+        }
+
         @media (max-width:800px) {
             .wrap { width:min(100% - 32px,620px); }
             nav { display:none; }
@@ -111,11 +152,23 @@
             .step:not(:last-child)::after { content:'↓'; right:50%; top:auto; bottom:-18px; }
             .feature-grid,.proof { grid-template-columns:1fr; }
             footer { flex-direction:column; }
+            .fixed-left { display: none; }
         }
         @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms!important; transition-duration:.01ms!important; } html { scroll-behavior:auto; } }
     </style>
 </head>
 <body>
+
+    <!-- FIXED LEFT SIDE IMAGES – both link to the Firefox addon -->
+    <div class="fixed-left" aria-label="Firefox extension promotion">
+        <a href="https://addons.mozilla.org/en-US/firefox/addon/maskagent/" target="_blank" rel="noopener noreferrer">
+            <img class="hero-main" src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/firefox-maskagent.png" alt="MaskAgent for Firefox">
+        </a>
+        <a class="try-btn" href="https://addons.mozilla.org/en-US/firefox/addon/maskagent/" target="_blank" rel="noopener noreferrer">
+            <img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/fox_tryitnow_button.png" alt="Try it now on Firefox">
+        </a>
+    </div>
+
     <div class="wrap">
         <header class="topbar">
             <a class="brand" href="#top"><img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/maskagent.png" alt="MaskAgent logo">MaskAgent</a>
@@ -123,7 +176,21 @@
             <div class="partners" aria-label="Project partners"><img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/isro.webp" alt="ISRO logo"><img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/sih2026.png" alt="Smart India Hackathon 2026 logo"></div>
         </header>
         <main id="top">
-            <section class="hero"><div class="hero-copy reveal"><p class="eyebrow">SIH 2026 / Problem ID SIH26171</p><h1>Let AI see.<br><span>Keep data private.</span></h1><p>On-device visual perception for lightweight browser agents. MaskAgent understands a web page, masks sensitive context, and acts locally through Ollama.</p><div class="actions"><a class="button primary" href="#approach">Explore the system <span>↘</span></a><a class="button secondary" href="#proof">Watch the demo <span>▶</span></a></div></div><div class="hero-visual reveal"><div class="orbit"></div><img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/maskagent.png" alt="MaskAgent project mark"></div></section>
+            <section class="hero">
+                <div class="hero-copy reveal">
+                    <p class="eyebrow">SIH 2026 / Problem ID SIH26171</p>
+                    <h1>Let AI see.<br><span>Keep data private.</span></h1>
+                    <p>On-device visual perception for lightweight browser agents. MaskAgent understands a web page, masks sensitive context, and acts locally through Ollama.</p>
+                    <div class="actions">
+                        <a class="button primary" href="#approach">Explore the system <span>↘</span></a>
+                        <a class="button secondary" href="#proof">Watch the demo <span>▶</span></a>
+                    </div>
+                </div>
+                <div class="hero-visual reveal">
+                    <div class="orbit"></div>
+                    <img src="https://raw.githubusercontent.com/bhuvanesh-m-dev/maskagent/refs/heads/main/img/maskagent.png" alt="MaskAgent project mark">
+                </div>
+            </section>
             <div class="statbar reveal"><div class="stat"><strong>100% local</strong><span>AI inference via Ollama</span></div><div class="stat"><strong>Before AI</strong><span>PII is detected and redacted first</span></div><div class="stat"><strong>Lightweight</strong><span>DOM + visual page understanding</span></div></div>
             <section id="approach" class="reveal"><div class="section-head"><h2>A privacy layer<br>before intelligence.</h2><p>Traditional browser agents pass raw page context to an AI service. MaskAgent inserts a deliberate boundary: understand the interface, remove the secrets, then let a local model decide.</p></div><div class="pipeline"><article class="step"><div class="step-num">01</div><h3>Web page</h3><p>The user opens a real page with its content and interface.</p></article><article class="step"><div class="step-num">02</div><h3>Scan UI</h3><p>DOM structure and visible elements are mapped for context.</p></article><article class="step"><div class="step-num">03</div><h3>Detect PII</h3><p>Names, email, phone, address and password fields are identified.</p></article><article class="step"><div class="step-num">04</div><h3>Redact</h3><p>Private values become safe placeholders before inference.</p></article><article class="step"><div class="step-num">05</div><h3>Act locally</h3><p>Ollama chooses a browser action from the sanitized context.</p></article></div></section>
             <section class="dark-band"><div class="wrap"><div class="section-head reveal"><h2>Small agent.<br>Serious guardrails.</h2><p>Built for useful browser automation without unrestricted access to personal information. Every action stays legible to the person using it.</p></div><div class="feature-grid reveal"><article class="feature"><div class="feature-icon">◉ / 01</div><h3>Privacy-preserving processing</h3><p>Redacts sensitive UI values before they enter an AI prompt.</p></article><article class="feature"><div class="feature-icon">⌁ / 02</div><h3>DOM + visual understanding</h3><p>Combines page structure with visible UI signals to find the right target.</p></article><article class="feature"><div class="feature-icon">↗ / 03</div><h3>Local browser actions</h3><p>Supports CLICK, TYPE, SCROLL, SELECT and DONE through a local model.</p></article><article class="feature"><div class="feature-icon">▤ / 04</div><h3>Human-readable activity</h3><p>An activity stream shows scans, redaction, decisions and execution.</p></article><article class="feature"><div class="feature-icon">⌬ / 05</div><h3>Action validation</h3><p>Checks whether a target exists and an intended action is relevant.</p></article><article class="feature"><div class="feature-icon">∞ / 06</div><h3>Research-ready foundation</h3><p>Designed to grow toward OCR, prompt-injection defense and cross-browser support.</p></article></div></div></section>
